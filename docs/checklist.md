@@ -47,6 +47,11 @@
 - [x] Recall/Precision/Hit@k, MRR, nDCG; deterministic answer metrics; latency percentiles; tokens
 - [x] Four-mode comparison with identical cases, labels, and k; JSON + Markdown reports; DB storage
 - [x] Real measured results (NVIDIA embeddings, local reranker, Groq answers)
+- [x] Held-out dev/test splits; public BEIR SciFact corpus (checksum-pinned, document-level scoring)
+- [x] Repeated runs (mean ± sd) and paired bootstrap CIs between modes
+- [x] Model-judged faithfulness (different model family), calibrated on 32 hand-labelled pairs
+- [x] Evidence-gate threshold calibrated on the dev split only
+- [ ] 3-repetition answer run with `gpt-oss-120b` (blocked by Groq's free daily token budget)
 - [x] Run telemetry (node trace, attempts, scores, tokens, outcome, error category)
 - [x] Optional OpenTelemetry and LangSmith; neither required
 

@@ -100,8 +100,9 @@ Retrieved text is untrusted. Several defences are layered; none is sufficient al
    are replaced by an abstention.
 4. **Flagging.** A heuristic detector marks instruction-like passages (`suspicious=true`). The
    prompt annotates them and the UI warns. It is a signal, not a boundary.
-5. **Measurement.** The benchmark contains a poisoned vendor notice. With Groq gpt-oss-120b, no
-   answer contained the injected value (forbidden content 0.000 over 60 cases). That is evidence
+5. **Measurement.** The benchmark contains a poisoned vendor notice. No answer contained the
+   injected value: forbidden content was 0.000 over 60 cases with Groq `gpt-oss-120b`, and over
+   93 held-out test-split generations (3 × 31) with `gpt-oss-20b`. That is evidence
    on this dataset, not a guarantee against all attacks.
 
 ## Output rendering

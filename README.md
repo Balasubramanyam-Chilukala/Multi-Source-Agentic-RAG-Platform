@@ -1,43 +1,86 @@
-# Atlas AI — Multi-Source Agentic Knowledge Platform
+# Atlas AI
 
-Atlas AI is an enterprise knowledge assistant. You connect documents and web pages, ask
-questions across them, and get answers grounded in **validated citations**. When the evidence
-isn't there, it says so. A LangGraph agent decides whether to search, refine the search, use a
-tool, ask a clarifying question, or abstain. Every run is traced, and a built-in benchmark
-measures retrieval and answer quality.
+**Answers from your own documents that you can check, that decline when the evidence is
+missing, and whose quality is measured on held-out data.**
 
-> **Live demo:** not deployed yet. The free-tier deployment (Render + Neon) is fully
-> prepared; see [docs/deployment.md](docs/deployment.md). A URL will be added here once it has
-> been verified.
+Atlas AI is a self-hostable knowledge assistant (FastAPI, LangGraph, PostgreSQL + pgvector,
+React). You connect documents and web pages and ask questions across them. Three properties set
+it apart from a chatbot over files:
 
-## Why it is more than a chatbot
+1. **Citations are validated in code, not trusted from the model.** Every `[S1]` marker must
+   point to a passage retrieved for that answer; fabricated sources and foreign links are
+   stripped; each sentence is labelled as source-supported or general context.
+2. **It abstains instead of guessing.** A retrieval-evidence gate and the answer validator turn
+   unsupported answers into an explicit *"I could not find sufficient evidence in your connected
+   knowledge sources to answer this reliably."*
+3. **Its quality is measured, including where it falls short.** Results come from held-out test
+   splits (one of them public), repeated runs, bootstrap confidence intervals, and a
+   faithfulness judge that is itself checked against hand labels. Negative results are
+   published alongside positive ones.
 
-- **Grounded by construction.**
-  - Every citation must point to a passage retrieved for that answer.
-  - Links that don't belong to a retrieved source are stripped.
-  - Each sentence is labelled as source-supported or general context.
-  - Unsupported answers become an explicit abstention: *"I could not find sufficient evidence
-    in your connected knowledge sources to answer this reliably."*
-- **Explicit agent.**
-  - A typed LangGraph state machine with conditional routing.
-  - Bounded retrieval retries and a hard budget on LLM calls.
-  - Tools for calculation, document metadata and summarizing a named document.
-  - Short-term memory kept in a PostgreSQL checkpointer.
-- **Hybrid retrieval in one database.**
-  - pgvector HNSW (dense) plus PostgreSQL full-text search (lexical, `ts_rank_cd`; not BM25),
-    fused with Reciprocal Rank Fusion.
-  - Optional cross-encoder reranking.
-  - Every query is filtered by tenant inside SQL.
-- **Multi-tenant and defensive.**
-  - JWT auth with membership re-checked on every request; roles; and 404 (not 403) for other
-    tenants' objects.
-  - Protection against fetching internal addresses during URL ingestion.
-  - Parser limits against oversized and decompression-bomb files.
-  - Layered prompt-injection defences, rate limits, an audit log, and secret redaction in logs.
-- **Measured.**
-  - A version-controlled 60-question benchmark across 9 categories, comparing four retrieval
-    modes on identical labels.
-  - Answer metrics are deterministic (no LLM judge), and the results below come from real runs.
+> **Live demo:** not deployed yet. The free-tier deployment (Render + Neon) is prepared; see
+> [docs/deployment.md](docs/deployment.md).
+>
+> The repository is named `Multi-Source-Agentic-RAG-Platform`; the product is Atlas AI.
+
+## Measured quality (2026-10-24)
+
+All numbers are from real runs on **test splits that were not used for any tuning**. Raw
+per-case results are committed under [`backend/eval/results/`](backend/eval/results/), and
+[docs/retrieval-and-evaluation.md](docs/retrieval-and-evaluation.md) has the full protocol and
+error analysis.
+
+### Answers: held-out handbook test split (31 questions, 3 repetitions)
+
+Generator `groq/openai/gpt-oss-20b`, hybrid retrieval, k = 5. Cells show mean ± sd over the
+three runs.
+
+| Metric | Result |
+|---|---|
+| Correctness (all required facts, no forbidden ones) | **0.925 ± 0.019** |
+| Citation precision (cited passages that are labelled relevant) | **1.000** |
+| Faithfulness, model-judged (cited sentences the judge rated *supported*) | **0.986 ± 0.025** (77 claims, 72 of 72 eligible answers judged) |
+| Abstention accuracy (decline unanswerable, answer answerable) | **0.925 ± 0.019** |
+| Injected or superseded content in answers | **0.000** (a poisoned document never steered an answer) |
+| End-to-end latency p50 | 1.6 s |
+
+The faithfulness judge is `nvidia/nemotron-3-ultra`, a different model family from the
+generator. On 32 hand-labelled (claim, passage) pairs it agreed on **29 of 32 labels (0.906)**,
+on **31 of 32 supported-vs-not decisions (0.969)**, and gave **no false "supported"
+verdicts** ([calibration report](backend/eval/results/judge-calibration/20261024T121749Z.md)).
+
+### Retrieval: BEIR SciFact test split (5,183 abstracts, 300 claims)
+
+A public benchmark scored at document level as in BEIR (nDCG@10, Recall@10). The 95% CIs are a
+paired bootstrap over the 300 claims against hybrid.
+
+| Mode | nDCG@10 | Recall@10 | MRR | Δ MRR vs. hybrid [95% CI] | p50 |
+|---|---|---|---|---|---|
+| dense (pgvector HNSW) | **0.745** | **0.851** | **0.721** | +0.124 [+0.089, +0.158] | 92 ms |
+| lexical (PostgreSQL FTS) | 0.401 | 0.563 | 0.361 | −0.235 [−0.273, −0.200] | 134 ms |
+| hybrid (RRF, the default) | 0.633 | 0.797 | 0.596 | — | 162 ms |
+| hybrid + MiniLM rerank | 0.704 | 0.847 | 0.668 | +0.072 [+0.035, +0.110] | 3.7 s |
+
+### What these numbers do and don't show
+
+- **Dense beats the default hybrid mode** on SciFact and on the handbook test split (Δ MRR
+  +0.107, CI [+0.027, +0.200]). PostgreSQL's `ts_rank_cd` has no IDF term, so on SciFact the
+  lexical leg scores far below published BM25 (≈ 0.67 nDCG@10) and drags the equal-weight fusion
+  down. Hybrid stays the default only on the untested argument that lexical matching protects
+  exact identifiers; switching the default to dense, or adding real BM25, is the indicated fix.
+- **The reranker helps on SciFact and makes no significant difference on the handbook**, at
+  roughly 1.4–3.7 s per query on CPU.
+- **Repeated runs agree exactly on retrieval** (deterministic embeddings), so the bootstrap CIs
+  over queries are the real error bars. Answer metrics vary slightly between runs.
+- **The abstention threshold was calibrated on the dev split only** (0.32). It still blocks one
+  answerable test paraphrase (top similarity 0.256), which the agent then rescues by rewriting
+  the query in some runs. That is a real dev→test generalisation miss, left unfixed rather than
+  tuned on test.
+- **Limits:** the handbook is small (31 test questions) and its labels were written by the
+  project author. The judge calibration set is small and author-labelled too. The primary
+  production generator (`gpt-oss-120b`) has not yet completed a 3-repetition run on the new
+  protocol: Groq's free tier allows 200k tokens per model per day, and it ran out during the
+  attempt.
 
 ## How it compares
 
@@ -49,47 +92,29 @@ audit, and adapt** such a system:
 | Concern | Typical approach | Atlas AI |
 |---|---|---|
 | Citations | Generated by the model | **Validated in code**: every marker must reference a passage retrieved for that answer; fabricated sources and foreign links are removed; unsupported answers become an explicit abstention |
-| "Is it any good?" | Demos and anecdotes | **Measured**: a version-controlled 60-case benchmark comparing four retrieval strategies on identical labels, with negative results (the reranker hurt) and error analysis published |
+| "Is it any good?" | Demos and anecdotes | **Measured on held-out data**: a public BEIR corpus plus a domain test split, repeated runs, bootstrap CIs, a calibrated faithfulness judge, and published negative results (hybrid lost to dense) |
 | Debugging a bad answer | Black box | **Run inspector**: executed agent steps, each retrieval attempt with per-passage scores, the sufficiency verdict, provider/model, tokens, and which fallbacks were skipped |
-| Prompt injection | Usually untested | **Tested**: a poisoned document in the benchmark; injected content appeared in 0 of 60 answers |
+| Prompt injection | Usually untested | **Tested**: a poisoned document in the benchmark; injected content appeared in 0 answers across 93 test-split generations |
 | Multi-tenancy | Often app-level filtering | **Inside every SQL query**, with tests using forged tokens, deactivated users, and cross-tenant IDs |
 | Model choice | One vendor | **Provider-agnostic chain** (Groq → Gemini → OpenRouter free → NVIDIA), with every model verified by a live call and paid OpenRouter models blocked at startup |
 | Data ownership | Vendor-hosted | Self-hostable: one Docker image plus PostgreSQL; no vendor-specific vector store |
 
-It is a portfolio-scale system: a small benchmark corpus, single-instance deployment, and free
-model tiers. See [Known limitations](#known-limitations).
+It is a portfolio-scale system: single-instance deployment and free model tiers. See
+[Known limitations](#known-limitations).
 
-## Results (real runs, 2026-10-24)
+## What happens to a question
 
-Benchmark `atlas-handbook-v1` v1.0.1: 11 documents, 60 cases. Embeddings: NVIDIA
-`nemotron-3.5-embed-1b`@1024. LLM: Groq `openai/gpt-oss-120b`. k = 5.
-
-| Retrieval mode | Recall@5 | MRR | nDCG@5 | p50 |
-|---|---|---|---|---|
-| dense | 1.000 | **0.949** | **0.961** | 537 ms |
-| lexical (PostgreSQL FTS) | 0.918 | 0.777 | 0.801 | 25 ms |
-| hybrid (RRF) | 1.000 | 0.905 | 0.923 | 599 ms |
-| hybrid + local MiniLM rerank | 1.000 | 0.871 | 0.902 | 2,068 ms |
-
-**Answers (hybrid retrieval):**
-
-| Metric | Result |
-|---|---|
-| Correctness | **0.967** |
-| Completeness | 0.980 |
-| Citation precision | **0.990** |
-| Abstention accuracy | **0.967** (all 8 unanswerable questions declined) |
-| Injected-content rate | **0.000** (a poisoned document never steered an answer) |
-| End-to-end latency | p50 1.46 s · p95 4.0 s |
-
-What these numbers mean, honestly:
-- The corpus is small, so recall saturates; MRR and nDCG are the discriminating metrics.
-- The small reranker **hurt** ranking here, so it is off by default.
-- Thresholds were calibrated on this same set, and each configuration was run once.
-- Full analysis, including error analysis, is in
-  [docs/retrieval-and-evaluation.md](docs/retrieval-and-evaluation.md) and the
-  [case study](docs/case-study.md). Raw results are in
-  [`backend/eval/results/`](backend/eval/results/atlas-handbook-v1/).
+- **Explicit agent.** A typed LangGraph state machine routes each question: retrieve, refine
+  the query and retry (bounded), call a tool (calculation, document metadata, summarizing a
+  named document), ask a clarifying question, or abstain. A hard budget caps LLM calls, and
+  short-term memory lives in a PostgreSQL checkpointer.
+- **Hybrid retrieval in one database.** pgvector HNSW (dense) plus PostgreSQL full-text search
+  (lexical, `ts_rank_cd`; not BM25), fused with Reciprocal Rank Fusion, with optional
+  cross-encoder reranking. Every query is filtered by tenant inside SQL.
+- **Multi-tenant and defensive.** JWT auth with membership re-checked on every request; roles;
+  404 (not 403) for other tenants' objects; protection against fetching internal addresses
+  during URL ingestion; parser limits against oversized and decompression-bomb files; layered
+  prompt-injection defences; rate limits; an audit log; and secret redaction in logs.
 
 ## Architecture
 
@@ -190,7 +215,7 @@ The important ones:
 
 ```bash
 cd backend
-uv run pytest                      # 234 tests; integration tests need `docker compose up -d db` (they are reported as skipped otherwise)
+uv run pytest                      # 261 tests; integration tests need `docker compose up -d db` (they are reported as skipped otherwise)
 uv run ruff check . && uv run ruff format --check . && uv run mypy
 cd ../frontend
 npm run lint && npm run typecheck && npm test && npm run build
@@ -205,12 +230,19 @@ builds, without any secrets.
 
 ```bash
 cd backend
-uv run python -m app.cli evaluate --modes all --mock                         # offline and deterministic
-uv run python -m app.cli evaluate --modes all --reranker local               # real embeddings, all 4 modes
-uv run python -m app.cli evaluate --modes hybrid --answers --pause 4         # plus Groq answers (~50k tokens)
+uv run python -m app.cli evaluate --modes all --mock                                   # offline, deterministic (CI)
+uv run python -m app.cli evaluate --modes all --runs 3 --reranker local                # handbook test split, real embeddings
+uv run python -m app.cli evaluate --dataset scifact --modes all --runs 3 --top-k 10     --reranker local                                                                   # public BEIR corpus (downloaded, checksum-pinned)
+uv run python -m app.cli evaluate --modes hybrid --answers --runs 3     --judge nvidia:nvidia/nemotron-3-ultra-550b-a55b --pause 8                         # answers + judged faithfulness (~80k tokens)
+uv run python -m app.cli evaluate --judge-calibration --judge nvidia:nvidia/nemotron-3-ultra-550b-a55b
+uv run python -m app.cli evaluate --calibrate-threshold                                # tunes MIN_DENSE_SIMILARITY on the dev split only
 ```
 
-Results go to PostgreSQL and to `backend/eval/results/<dataset>/<timestamp>.{json,md}`.
+- Runs report on the **test** split by default; `--split dev` is for tuning. The generator is
+  pinned (no fallback) unless `--allow-fallback` is passed, so a run measures one model.
+- Results go to PostgreSQL and to `backend/eval/results/<dataset>/<timestamp>.{json,md}`. If a
+  repetition fails (provider outage, exhausted quota), the report is marked incomplete and the
+  CLI exits non-zero; provider errors inside a run are listed per run.
 
 ## API
 
@@ -230,8 +262,11 @@ not proofs.
 
 ## Known limitations
 
-- The benchmark corpus is small (recall saturates). Thresholds were calibrated on the
-  evaluation set, and each configuration was run once.
+- The domain benchmark is small (31 test questions), and its labels and the judge calibration
+  set were written by the project author. The public SciFact benchmark covers retrieval only.
+- The default hybrid mode is measurably worse than dense on both benchmarks (see
+  [Measured quality](#measured-quality-2026-10-24)); the lexical leg is PostgreSQL FTS, not
+  BM25.
 - No OCR.
 - Ingestion runs in-process (interrupted jobs are recovered as retryable failures, but there
   is no durable queue).
@@ -253,6 +288,7 @@ To be added from the deployed app. The Playwright visual spec can capture them:
 - Stronger or domain-tuned reranker.
 - OCR.
 - Invitations and SSO.
-- A held-out evaluation split and repeated runs with confidence intervals.
-- Entailment-based faithfulness scoring.
+- BM25 (or a weighted fusion tuned on the dev split) for the lexical leg, and a dense default.
+- A 3-repetition answer run with `gpt-oss-120b` once Groq's daily token budget allows it.
+- Independently labelled evaluation data.
 - Redis-backed rate limits for multiple replicas.

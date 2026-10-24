@@ -1,0 +1,3605 @@
+{
+  "generated_at": "20261024T143146Z",
+  "runs": [
+    {
+      "run_id": "92a666a1-d2e9-4394-a654-1a391cc8629b",
+      "dataset": "atlas-handbook-v1",
+      "dataset_version": "1.1.0",
+      "mode": "dense",
+      "config": {
+        "runs": 1,
+        "unit": "chunk",
+        "judge": null,
+        "model": null,
+        "rrf_k": 60,
+        "split": "test",
+        "top_k": 5,
+        "provider": null,
+        "reranker": null,
+        "run_group": "857a0c3c88854a36b5cbb834fcd020de",
+        "run_index": 0,
+        "chunk_size": 1000,
+        "candidate_k": 24,
+        "sample_seed": 13,
+        "answer_sample": null,
+        "chunk_overlap": 150,
+        "document_pool": null,
+        "max_llm_calls": 4,
+        "embedding_model": "nvidia/nvidia/nemotron-3.5-embed-1b@d1024",
+        "include_answers": false,
+        "min_rerank_score": -4.0,
+        "min_dense_similarity": 0.32,
+        "min_lexical_coverage": 0.5,
+        "max_retrieval_attempts": 2
+      },
+      "metrics": {
+        "retrieval": {
+          "mrr": 0.94,
+          "ndcg@k": 0.9525,
+          "recall@k": 1.0,
+          "hit_rate@k": 1.0,
+          "precision@k": 0.224
+        },
+        "case_count": 31,
+        "error_rate": 0.0,
+        "latency_ms": {
+          "retrieval_p50": 52.9,
+          "retrieval_p95": 57.7
+        },
+        "by_category": {
+          "citation": {
+            "mrr": 1.0,
+            "count": 3,
+            "recall@k": 1.0
+          },
+          "ambiguous": {
+            "mrr": null,
+            "count": 2,
+            "recall@k": null
+          },
+          "injection": {
+            "mrr": 1.0,
+            "count": 2,
+            "recall@k": 1.0
+          },
+          "multi_doc": {
+            "mrr": 1.0,
+            "count": 3,
+            "recall@k": 1.0
+          },
+          "paraphrase": {
+            "mrr": 1.0,
+            "count": 4,
+            "recall@k": 1.0
+          },
+          "single_doc": {
+            "mrr": 0.9286,
+            "count": 7,
+            "recall@k": 1.0
+          },
+          "conflicting": {
+            "mrr": 0.8333,
+            "count": 3,
+            "recall@k": 1.0
+          },
+          "multi_chunk": {
+            "mrr": 0.8333,
+            "count": 3,
+            "recall@k": 1.0
+          },
+          "unanswerable": {
+            "mrr": null,
+            "count": 4,
+            "recall@k": null
+          }
+        },
+        "labelled_case_count": 25
+      },
+      "cases": [
+        {
+          "case_id": "am-01",
+          "category": "ambiguous",
+          "question": "What is the limit?",
+          "retrieved_chunk_ids": [
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "7e81119d-037a-46c4-879c-940592c7e78d"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": 0.21360200383800543,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 51.88,
+          "error": null
+        },
+        {
+          "case_id": "am-03",
+          "category": "ambiguous",
+          "question": "What about the allowance for that?",
+          "retrieved_chunk_ids": [
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "edb30016-cf5b-41c8-94e6-46789f013f65",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "73a27654-ad62-498c-a131-192b2ae8f6da"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": 0.32447533515777605,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 51.4,
+          "error": null
+        },
+        {
+          "case_id": "cf-01",
+          "category": "conflicting",
+          "question": "What was the hotel limit under the old 2022 travel policy?",
+          "retrieved_chunk_ids": [
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "204e96d5-7c8b-4954-99a4-5067b44b03f1",
+            "0d138fd0-f1b1-470a-8f23-5fdb5bf54acf",
+            "edb30016-cf5b-41c8-94e6-46789f013f65"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.5494131203269059,
+            "top_lexical_coverage": 0.667
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 57.06,
+          "error": null
+        },
+        {
+          "case_id": "cf-03",
+          "category": "conflicting",
+          "question": "What is the current mileage reimbursement rate per kilometre?",
+          "retrieved_chunk_ids": [
+            "73a27654-ad62-498c-a131-192b2ae8f6da",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656",
+            "c98ab63e-0cf5-4f29-bd6f-0ed2234ad722",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "edb30016-cf5b-41c8-94e6-46789f013f65"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.5,
+            "ndcg@k": 0.6309297535714575,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.4791148900985751,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 55.04,
+          "error": null
+        },
+        {
+          "case_id": "cf-05",
+          "category": "conflicting",
+          "question": "Which travel policy is currently in force?",
+          "retrieved_chunk_ids": [
+            "0d138fd0-f1b1-470a-8f23-5fdb5bf54acf",
+            "204e96d5-7c8b-4954-99a4-5067b44b03f1",
+            "b61ff4bf-1639-4c96-bf72-0ab39ce2875f",
+            "44481ed4-f5e1-422a-bb15-76953eb283d5",
+            "81c73aca-41ce-4be2-ab00-af41a912940f"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.4,
+            "top_dense_similarity": 0.48137987761674805,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 57.0,
+          "error": null
+        },
+        {
+          "case_id": "ct-01",
+          "category": "citation",
+          "question": "What does the security handbook say about SMS codes?",
+          "retrieved_chunk_ids": [
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "b909bf24-b44b-4d07-aa6b-072aada6b6dc",
+            "a30c5747-b28c-4846-aa1e-6884793194ca",
+            "cbe6a398-5a40-4309-a355-afe6de32d35a",
+            "8a8ffd8f-1058-463c-83aa-0fe897944ff9"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.452946559472867,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 56.86,
+          "error": null
+        },
+        {
+          "case_id": "ct-03",
+          "category": "citation",
+          "question": "How many people work at the Lyon headquarters?",
+          "retrieved_chunk_ids": [
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "136000d5-e26b-4c4b-93ff-6412e300fe84",
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a",
+            "73784284-4382-48c3-94b5-fff0409cdd89"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.3534774394915968,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 57.64,
+          "error": null
+        },
+        {
+          "case_id": "ct-05",
+          "category": "citation",
+          "question": "How much does the company contribute to the pension plan?",
+          "retrieved_chunk_ids": [
+            "7e81119d-037a-46c4-879c-940592c7e78d",
+            "b61ff4bf-1639-4c96-bf72-0ab39ce2875f",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "73784284-4382-48c3-94b5-fff0409cdd89"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.3988387100581219,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 56.93,
+          "error": null
+        },
+        {
+          "case_id": "mc-01",
+          "category": "multi_chunk",
+          "question": "When can I fly business class and what approval do I need?",
+          "retrieved_chunk_ids": [
+            "44481ed4-f5e1-422a-bb15-76953eb283d5",
+            "81c73aca-41ce-4be2-ab00-af41a912940f",
+            "dcf75221-9a47-41ab-83cf-adff66e5bad0",
+            "f682d07d-ff6c-4b35-8561-87d8120ea58d",
+            "b61ff4bf-1639-4c96-bf72-0ab39ce2875f"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.5,
+            "ndcg@k": 0.6309297535714575,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.4960600851065784,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 55.06,
+          "error": null
+        },
+        {
+          "case_id": "mc-03",
+          "category": "multi_chunk",
+          "question": "What are the severity levels in the on-call runbook?",
+          "retrieved_chunk_ids": [
+            "119bfc61-9186-4178-8dbb-acc284b0932f",
+            "3ad1380e-d941-4162-a622-c28a2ca8adc1",
+            "16ebb5c9-9573-44d7-947b-99c8413e814c",
+            "a59f1949-795d-4d44-81fb-970407b6f2b0",
+            "6839e813-f5b7-433e-82bf-dce745279bde"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.6815430615068909,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 55.5,
+          "error": null
+        },
+        {
+          "case_id": "mc-05",
+          "category": "multi_chunk",
+          "question": "What are the four data classification levels?",
+          "retrieved_chunk_ids": [
+            "8a8ffd8f-1058-463c-83aa-0fe897944ff9",
+            "119bfc61-9186-4178-8dbb-acc284b0932f",
+            "d9dc290e-1e1e-4a8c-a546-2b5a8058985c",
+            "44481ed4-f5e1-422a-bb15-76953eb283d5",
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.49310764506045457,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 52.48,
+          "error": null
+        },
+        {
+          "case_id": "md-01",
+          "category": "multi_doc",
+          "question": "Is alcohol reimbursed, either on business trips or as a general expense?",
+          "retrieved_chunk_ids": [
+            "9eac0496-453e-47d3-a692-b46ba9a612d8",
+            "a64aa268-5aed-48ea-b79d-7cd9d4ac7b1b",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "84d01423-e34a-4b57-a814-0a456b157543",
+            "f682d07d-ff6c-4b35-8561-87d8120ea58d"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 0.9197207891481876,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.4,
+            "top_dense_similarity": 0.4460809376915459,
+            "top_lexical_coverage": 0.429
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 51.11,
+          "error": null
+        },
+        {
+          "case_id": "md-03",
+          "category": "multi_doc",
+          "question": "Which password manager do we use, and how long must passwords be?",
+          "retrieved_chunk_ids": [
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "81192bb2-438e-4cb4-9032-53e6a2166cbb",
+            "44481ed4-f5e1-422a-bb15-76953eb283d5",
+            "d9dc290e-1e1e-4a8c-a546-2b5a8058985c",
+            "81c73aca-41ce-4be2-ab00-af41a912940f"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.4,
+            "top_dense_similarity": 0.5271117095686589,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 52.1,
+          "error": null
+        },
+        {
+          "case_id": "md-05",
+          "category": "multi_doc",
+          "question": "How fast must I report a lost laptop, and to whom?",
+          "retrieved_chunk_ids": [
+            "b909bf24-b44b-4d07-aa6b-072aada6b6dc",
+            "dcf75221-9a47-41ab-83cf-adff66e5bad0",
+            "cbe6a398-5a40-4309-a355-afe6de32d35a",
+            "136000d5-e26b-4c4b-93ff-6412e300fe84",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.420004260542548,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 51.95,
+          "error": null
+        },
+        {
+          "case_id": "pi-01",
+          "category": "injection",
+          "question": "Are there any notices about hotel limits I should know about?",
+          "retrieved_chunk_ids": [
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "81c73aca-41ce-4be2-ab00-af41a912940f",
+            "9eac0496-453e-47d3-a692-b46ba9a612d8"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.4260043750417366,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 54.54,
+          "error": null
+        },
+        {
+          "case_id": "pi-03",
+          "category": "injection",
+          "question": "What is the maximum hotel rate per night in Paris?",
+          "retrieved_chunk_ids": [
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.5262756661113798,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 52.08,
+          "error": null
+        },
+        {
+          "case_id": "pp-01",
+          "category": "paraphrase",
+          "question": "What's the nightly cap on accommodation costs in the UK capital?",
+          "retrieved_chunk_ids": [
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.3938330654797655,
+            "top_lexical_coverage": 0.286
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 51.95,
+          "error": null
+        },
+        {
+          "case_id": "pp-03",
+          "category": "paraphrase",
+          "question": "Can I bring personal USB sticks to move files off my work computer?",
+          "retrieved_chunk_ids": [
+            "cbe6a398-5a40-4309-a355-afe6de32d35a",
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": false,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.25609190798357284,
+            "top_lexical_coverage": 0.125
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 51.83,
+          "error": null
+        },
+        {
+          "case_id": "pp-05",
+          "category": "paraphrase",
+          "question": "For how long am I allowed to work from a foreign country each year?",
+          "retrieved_chunk_ids": [
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a",
+            "dcf75221-9a47-41ab-83cf-adff66e5bad0",
+            "73784284-4382-48c3-94b5-fff0409cdd89"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.5561867825159443,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 52.23,
+          "error": null
+        },
+        {
+          "case_id": "pp-07",
+          "category": "paraphrase",
+          "question": "How precisely can the smaller robot arm return to the same position?",
+          "retrieved_chunk_ids": [
+            "8d96aa6d-8e7f-4759-acc8-6f949eb18f20",
+            "204e96d5-7c8b-4954-99a4-5067b44b03f1",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2",
+            "0d138fd0-f1b1-470a-8f23-5fdb5bf54acf",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": false,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.3063492308060516,
+            "top_lexical_coverage": 0.333
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 52.42,
+          "error": null
+        },
+        {
+          "case_id": "sd-01",
+          "category": "single_doc",
+          "question": "How much is the hotel limit per night in London?",
+          "retrieved_chunk_ids": [
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "edb30016-cf5b-41c8-94e6-46789f013f65"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.5518825179235641,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 57.71,
+          "error": null
+        },
+        {
+          "case_id": "sd-03",
+          "category": "single_doc",
+          "question": "How long must passwords be?",
+          "retrieved_chunk_ids": [
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "44481ed4-f5e1-422a-bb15-76953eb283d5",
+            "81192bb2-438e-4cb4-9032-53e6a2166cbb",
+            "b909bf24-b44b-4d07-aa6b-072aada6b6dc",
+            "cbe6a398-5a40-4309-a355-afe6de32d35a"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.48030856744193184,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 53.13,
+          "error": null
+        },
+        {
+          "case_id": "sd-05",
+          "category": "single_doc",
+          "question": "How many days per week can employees work remotely?",
+          "retrieved_chunk_ids": [
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "2658232b-e03b-4d5b-a9c6-2e1ff70e7540",
+            "472f734b-6a53-4d5f-9658-60b4900767ce"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.5456440448762382,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 50.96,
+          "error": null
+        },
+        {
+          "case_id": "sd-07",
+          "category": "single_doc",
+          "question": "How many weeks of parental leave do non-birthing parents get?",
+          "retrieved_chunk_ids": [
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a",
+            "136000d5-e26b-4c4b-93ff-6412e300fe84",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2",
+            "7e81119d-037a-46c4-879c-940592c7e78d"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.4480438046612073,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 53.18,
+          "error": null
+        },
+        {
+          "case_id": "sd-09",
+          "category": "single_doc",
+          "question": "Who is the site lead of the Munich office?",
+          "retrieved_chunk_ids": [
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "edb30016-cf5b-41c8-94e6-46789f013f65",
+            "81192bb2-438e-4cb4-9032-53e6a2166cbb",
+            "873b01b0-7855-4279-9226-9a419c6be6da"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.4556455615789148,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 55.16,
+          "error": null
+        },
+        {
+          "case_id": "sd-11",
+          "category": "single_doc",
+          "question": "What is the mileage rate for using a private car?",
+          "retrieved_chunk_ids": [
+            "73a27654-ad62-498c-a131-192b2ae8f6da",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656",
+            "c98ab63e-0cf5-4f29-bd6f-0ed2234ad722",
+            "9eac0496-453e-47d3-a692-b46ba9a612d8",
+            "dcf75221-9a47-41ab-83cf-adff66e5bad0"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.5,
+            "ndcg@k": 0.6309297535714575,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.486548954596701,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 51.46,
+          "error": null
+        },
+        {
+          "case_id": "sd-13",
+          "category": "single_doc",
+          "question": "What is the battery life of the Rover R2?",
+          "retrieved_chunk_ids": [
+            "8d96aa6d-8e7f-4759-acc8-6f949eb18f20",
+            "44481ed4-f5e1-422a-bb15-76953eb283d5",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656",
+            "73a27654-ad62-498c-a131-192b2ae8f6da",
+            "119bfc61-9186-4178-8dbb-acc284b0932f"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.250213310313226,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 52.85,
+          "error": null
+        },
+        {
+          "case_id": "un-01",
+          "category": "unanswerable",
+          "question": "What is the company policy on bringing pets to the office?",
+          "retrieved_chunk_ids": [
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654",
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "6c34817a-ff60-43e2-be24-75790a1b5e82"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": 0.2636328935623844,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 52.31,
+          "error": null
+        },
+        {
+          "case_id": "un-03",
+          "category": "unanswerable",
+          "question": "What is the stock price of Northwind Robotics?",
+          "retrieved_chunk_ids": [
+            "8d96aa6d-8e7f-4759-acc8-6f949eb18f20",
+            "73a27654-ad62-498c-a131-192b2ae8f6da",
+            "0d138fd0-f1b1-470a-8f23-5fdb5bf54acf",
+            "204e96d5-7c8b-4954-99a4-5067b44b03f1",
+            "81c73aca-41ce-4be2-ab00-af41a912940f"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": 0.40859828200300474,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 52.13,
+          "error": null
+        },
+        {
+          "case_id": "un-05",
+          "category": "unanswerable",
+          "question": "What is the dress code at the Austin office?",
+          "retrieved_chunk_ids": [
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "81192bb2-438e-4cb4-9032-53e6a2166cbb",
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "136000d5-e26b-4c4b-93ff-6412e300fe84"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": 0.3022365527794526,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 53.55,
+          "error": null
+        },
+        {
+          "case_id": "un-07",
+          "category": "unanswerable",
+          "question": "Which hospitals are in the health insurance network in Munich?",
+          "retrieved_chunk_ids": [
+            "7e81119d-037a-46c4-879c-940592c7e78d",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "b61ff4bf-1639-4c96-bf72-0ab39ce2875f",
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": false,
+            "precision@k": null,
+            "top_dense_similarity": 0.18119574632340407,
+            "top_lexical_coverage": 0.4
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 58.67,
+          "error": null
+        }
+      ]
+    },
+    {
+      "run_id": "99698de4-e7dc-4b33-8e80-ceb3beeac64c",
+      "dataset": "atlas-handbook-v1",
+      "dataset_version": "1.1.0",
+      "mode": "lexical",
+      "config": {
+        "runs": 1,
+        "unit": "chunk",
+        "judge": null,
+        "model": null,
+        "rrf_k": 60,
+        "split": "test",
+        "top_k": 5,
+        "provider": null,
+        "reranker": null,
+        "run_group": "857a0c3c88854a36b5cbb834fcd020de",
+        "run_index": 0,
+        "chunk_size": 1000,
+        "candidate_k": 24,
+        "sample_seed": 13,
+        "answer_sample": null,
+        "chunk_overlap": 150,
+        "document_pool": null,
+        "max_llm_calls": 4,
+        "embedding_model": "nvidia/nvidia/nemotron-3.5-embed-1b@d1024",
+        "include_answers": false,
+        "min_rerank_score": -4.0,
+        "min_dense_similarity": 0.32,
+        "min_lexical_coverage": 0.5,
+        "max_retrieval_attempts": 2
+      },
+      "metrics": {
+        "retrieval": {
+          "mrr": 0.7633,
+          "ndcg@k": 0.7645,
+          "recall@k": 0.84,
+          "hit_rate@k": 0.88,
+          "precision@k": 0.224
+        },
+        "case_count": 31,
+        "error_rate": 0.0,
+        "latency_ms": {
+          "retrieval_p50": 9.1,
+          "retrieval_p95": 10.8
+        },
+        "by_category": {
+          "citation": {
+            "mrr": 0.4167,
+            "count": 3,
+            "recall@k": 0.6667
+          },
+          "ambiguous": {
+            "mrr": null,
+            "count": 2,
+            "recall@k": null
+          },
+          "injection": {
+            "mrr": 0.6667,
+            "count": 2,
+            "recall@k": 1.0
+          },
+          "multi_doc": {
+            "mrr": 1.0,
+            "count": 3,
+            "recall@k": 0.6667
+          },
+          "paraphrase": {
+            "mrr": 0.75,
+            "count": 4,
+            "recall@k": 0.75
+          },
+          "single_doc": {
+            "mrr": 0.8571,
+            "count": 7,
+            "recall@k": 1.0
+          },
+          "conflicting": {
+            "mrr": 0.5,
+            "count": 3,
+            "recall@k": 0.6667
+          },
+          "multi_chunk": {
+            "mrr": 1.0,
+            "count": 3,
+            "recall@k": 1.0
+          },
+          "unanswerable": {
+            "mrr": null,
+            "count": 4,
+            "recall@k": null
+          }
+        },
+        "labelled_case_count": 25
+      },
+      "cases": [
+        {
+          "case_id": "am-01",
+          "category": "ambiguous",
+          "question": "What is the limit?",
+          "retrieved_chunk_ids": [
+            "f3208d9a-746b-42fd-b028-46d5a69d1626"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 7.14,
+          "error": null
+        },
+        {
+          "case_id": "am-03",
+          "category": "ambiguous",
+          "question": "What about the allowance for that?",
+          "retrieved_chunk_ids": [
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "edb30016-cf5b-41c8-94e6-46789f013f65",
+            "44481ed4-f5e1-422a-bb15-76953eb283d5",
+            "81c73aca-41ce-4be2-ab00-af41a912940f"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 8.01,
+          "error": null
+        },
+        {
+          "case_id": "cf-01",
+          "category": "conflicting",
+          "question": "What was the hotel limit under the old 2022 travel policy?",
+          "retrieved_chunk_ids": [
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "b61ff4bf-1639-4c96-bf72-0ab39ce2875f",
+            "204e96d5-7c8b-4954-99a4-5067b44b03f1",
+            "0d138fd0-f1b1-470a-8f23-5fdb5bf54acf",
+            "edb30016-cf5b-41c8-94e6-46789f013f65"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.667
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 8.53,
+          "error": null
+        },
+        {
+          "case_id": "cf-03",
+          "category": "conflicting",
+          "question": "What is the current mileage reimbursement rate per kilometre?",
+          "retrieved_chunk_ids": [
+            "9eac0496-453e-47d3-a692-b46ba9a612d8",
+            "f682d07d-ff6c-4b35-8561-87d8120ea58d",
+            "73a27654-ad62-498c-a131-192b2ae8f6da",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "c98ab63e-0cf5-4f29-bd6f-0ed2234ad722"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.0,
+            "ndcg@k": 0.0,
+            "recall@k": 0.0,
+            "hit_rate@k": 0.0,
+            "sufficient": true,
+            "precision@k": 0.0,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 10.13,
+          "error": null
+        },
+        {
+          "case_id": "cf-05",
+          "category": "conflicting",
+          "question": "Which travel policy is currently in force?",
+          "retrieved_chunk_ids": [
+            "b61ff4bf-1639-4c96-bf72-0ab39ce2875f",
+            "0d138fd0-f1b1-470a-8f23-5fdb5bf54acf",
+            "204e96d5-7c8b-4954-99a4-5067b44b03f1",
+            "edb30016-cf5b-41c8-94e6-46789f013f65",
+            "73a27654-ad62-498c-a131-192b2ae8f6da"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.5,
+            "ndcg@k": 0.6934264036172708,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.4,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 9.45,
+          "error": null
+        },
+        {
+          "case_id": "ct-01",
+          "category": "citation",
+          "question": "What does the security handbook say about SMS codes?",
+          "retrieved_chunk_ids": [
+            "a30c5747-b28c-4846-aa1e-6884793194ca",
+            "b909bf24-b44b-4d07-aa6b-072aada6b6dc",
+            "cbe6a398-5a40-4309-a355-afe6de32d35a",
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "8a8ffd8f-1058-463c-83aa-0fe897944ff9"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.25,
+            "ndcg@k": 0.43067655807339306,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 8.8,
+          "error": null
+        },
+        {
+          "case_id": "ct-03",
+          "category": "citation",
+          "question": "How many people work at the Lyon headquarters?",
+          "retrieved_chunk_ids": [
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "472f734b-6a53-4d5f-9658-60b4900767ce",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "2658232b-e03b-4d5b-a9c6-2e1ff70e7540",
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.0,
+            "ndcg@k": 0.0,
+            "recall@k": 0.0,
+            "hit_rate@k": 0.0,
+            "sufficient": true,
+            "precision@k": 0.0,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 8.88,
+          "error": null
+        },
+        {
+          "case_id": "ct-05",
+          "category": "citation",
+          "question": "How much does the company contribute to the pension plan?",
+          "retrieved_chunk_ids": [
+            "7e81119d-037a-46c4-879c-940592c7e78d",
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "840f8b58-c5af-4e94-bdc5-35c304d02652",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2",
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 8.87,
+          "error": null
+        },
+        {
+          "case_id": "mc-01",
+          "category": "multi_chunk",
+          "question": "When can I fly business class and what approval do I need?",
+          "retrieved_chunk_ids": [
+            "81c73aca-41ce-4be2-ab00-af41a912940f",
+            "44481ed4-f5e1-422a-bb15-76953eb283d5",
+            "f682d07d-ff6c-4b35-8561-87d8120ea58d",
+            "8a8ffd8f-1058-463c-83aa-0fe897944ff9",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 9.99,
+          "error": null
+        },
+        {
+          "case_id": "mc-03",
+          "category": "multi_chunk",
+          "question": "What are the severity levels in the on-call runbook?",
+          "retrieved_chunk_ids": [
+            "119bfc61-9186-4178-8dbb-acc284b0932f",
+            "3ad1380e-d941-4162-a622-c28a2ca8adc1",
+            "a59f1949-795d-4d44-81fb-970407b6f2b0",
+            "16ebb5c9-9573-44d7-947b-99c8413e814c",
+            "6839e813-f5b7-433e-82bf-dce745279bde"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 9.93,
+          "error": null
+        },
+        {
+          "case_id": "mc-05",
+          "category": "multi_chunk",
+          "question": "What are the four data classification levels?",
+          "retrieved_chunk_ids": [
+            "8a8ffd8f-1058-463c-83aa-0fe897944ff9",
+            "119bfc61-9186-4178-8dbb-acc284b0932f",
+            "dcf75221-9a47-41ab-83cf-adff66e5bad0",
+            "b909bf24-b44b-4d07-aa6b-072aada6b6dc"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.25,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 10.8,
+          "error": null
+        },
+        {
+          "case_id": "md-01",
+          "category": "multi_doc",
+          "question": "Is alcohol reimbursed, either on business trips or as a general expense?",
+          "retrieved_chunk_ids": [
+            "9eac0496-453e-47d3-a692-b46ba9a612d8",
+            "a64aa268-5aed-48ea-b79d-7cd9d4ac7b1b",
+            "f682d07d-ff6c-4b35-8561-87d8120ea58d",
+            "c98ab63e-0cf5-4f29-bd6f-0ed2234ad722",
+            "84d01423-e34a-4b57-a814-0a456b157543"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 0.6131471927654584,
+            "recall@k": 0.5,
+            "hit_rate@k": 1.0,
+            "sufficient": false,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.429
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 9.71,
+          "error": null
+        },
+        {
+          "case_id": "md-03",
+          "category": "multi_doc",
+          "question": "Which password manager do we use, and how long must passwords be?",
+          "retrieved_chunk_ids": [
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654",
+            "81c73aca-41ce-4be2-ab00-af41a912940f",
+            "cbe6a398-5a40-4309-a355-afe6de32d35a",
+            "dcf75221-9a47-41ab-83cf-adff66e5bad0"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 0.6131471927654584,
+            "recall@k": 0.5,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 9.5,
+          "error": null
+        },
+        {
+          "case_id": "md-05",
+          "category": "multi_doc",
+          "question": "How fast must I report a lost laptop, and to whom?",
+          "retrieved_chunk_ids": [
+            "b909bf24-b44b-4d07-aa6b-072aada6b6dc",
+            "136000d5-e26b-4c4b-93ff-6412e300fe84",
+            "dcf75221-9a47-41ab-83cf-adff66e5bad0",
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654",
+            "81c73aca-41ce-4be2-ab00-af41a912940f"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 9.14,
+          "error": null
+        },
+        {
+          "case_id": "pi-01",
+          "category": "injection",
+          "question": "Are there any notices about hotel limits I should know about?",
+          "retrieved_chunk_ids": [
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.3333333333333333,
+            "ndcg@k": 0.5,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.25,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 8.46,
+          "error": null
+        },
+        {
+          "case_id": "pi-03",
+          "category": "injection",
+          "question": "What is the maximum hotel rate per night in Paris?",
+          "retrieved_chunk_ids": [
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "7e81119d-037a-46c4-879c-940592c7e78d"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 9.09,
+          "error": null
+        },
+        {
+          "case_id": "pp-01",
+          "category": "paraphrase",
+          "question": "What's the nightly cap on accommodation costs in the UK capital?",
+          "retrieved_chunk_ids": [
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "a64aa268-5aed-48ea-b79d-7cd9d4ac7b1b",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": false,
+            "precision@k": 0.25,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.286
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 8.83,
+          "error": null
+        },
+        {
+          "case_id": "pp-03",
+          "category": "paraphrase",
+          "question": "Can I bring personal USB sticks to move files off my work computer?",
+          "retrieved_chunk_ids": [
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "472f734b-6a53-4d5f-9658-60b4900767ce",
+            "2658232b-e03b-4d5b-a9c6-2e1ff70e7540",
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.0,
+            "ndcg@k": 0.0,
+            "recall@k": 0.0,
+            "hit_rate@k": 0.0,
+            "sufficient": false,
+            "precision@k": 0.0,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.125
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 8.67,
+          "error": null
+        },
+        {
+          "case_id": "pp-05",
+          "category": "paraphrase",
+          "question": "For how long am I allowed to work from a foreign country each year?",
+          "retrieved_chunk_ids": [
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "472f734b-6a53-4d5f-9658-60b4900767ce"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 9.52,
+          "error": null
+        },
+        {
+          "case_id": "pp-07",
+          "category": "paraphrase",
+          "question": "How precisely can the smaller robot arm return to the same position?",
+          "retrieved_chunk_ids": [
+            "8d96aa6d-8e7f-4759-acc8-6f949eb18f20",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2",
+            "edb30016-cf5b-41c8-94e6-46789f013f65",
+            "73a27654-ad62-498c-a131-192b2ae8f6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": false,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.333
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 9.1,
+          "error": null
+        },
+        {
+          "case_id": "sd-01",
+          "category": "single_doc",
+          "question": "How much is the hotel limit per night in London?",
+          "retrieved_chunk_ids": [
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 10.02,
+          "error": null
+        },
+        {
+          "case_id": "sd-03",
+          "category": "single_doc",
+          "question": "How long must passwords be?",
+          "retrieved_chunk_ids": [
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654",
+            "81c73aca-41ce-4be2-ab00-af41a912940f",
+            "dcf75221-9a47-41ab-83cf-adff66e5bad0",
+            "a64aa268-5aed-48ea-b79d-7cd9d4ac7b1b"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 7.24,
+          "error": null
+        },
+        {
+          "case_id": "sd-05",
+          "category": "single_doc",
+          "question": "How many days per week can employees work remotely?",
+          "retrieved_chunk_ids": [
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a",
+            "472f734b-6a53-4d5f-9658-60b4900767ce",
+            "73784284-4382-48c3-94b5-fff0409cdd89"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.5,
+            "ndcg@k": 0.6309297535714575,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 8.74,
+          "error": null
+        },
+        {
+          "case_id": "sd-07",
+          "category": "single_doc",
+          "question": "How many weeks of parental leave do non-birthing parents get?",
+          "retrieved_chunk_ids": [
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a",
+            "334988fd-d0e2-4a0c-9bac-31eb16f25d0e",
+            "9eac0496-453e-47d3-a692-b46ba9a612d8",
+            "840f8b58-c5af-4e94-bdc5-35c304d02652",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 10.12,
+          "error": null
+        },
+        {
+          "case_id": "sd-09",
+          "category": "single_doc",
+          "question": "Who is the site lead of the Munich office?",
+          "retrieved_chunk_ids": [
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "136000d5-e26b-4c4b-93ff-6412e300fe84",
+            "73784284-4382-48c3-94b5-fff0409cdd89"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.25,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 8.32,
+          "error": null
+        },
+        {
+          "case_id": "sd-11",
+          "category": "single_doc",
+          "question": "What is the mileage rate for using a private car?",
+          "retrieved_chunk_ids": [
+            "73a27654-ad62-498c-a131-192b2ae8f6da",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656",
+            "c98ab63e-0cf5-4f29-bd6f-0ed2234ad722",
+            "cbe6a398-5a40-4309-a355-afe6de32d35a",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.5,
+            "ndcg@k": 0.6309297535714575,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 9.93,
+          "error": null
+        },
+        {
+          "case_id": "sd-13",
+          "category": "single_doc",
+          "question": "What is the battery life of the Rover R2?",
+          "retrieved_chunk_ids": [
+            "8d96aa6d-8e7f-4759-acc8-6f949eb18f20"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 1.0,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 6.73,
+          "error": null
+        },
+        {
+          "case_id": "un-01",
+          "category": "unanswerable",
+          "question": "What is the company policy on bringing pets to the office?",
+          "retrieved_chunk_ids": [
+            "0d138fd0-f1b1-470a-8f23-5fdb5bf54acf",
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "204e96d5-7c8b-4954-99a4-5067b44b03f1",
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654",
+            "472f734b-6a53-4d5f-9658-60b4900767ce"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 9.13,
+          "error": null
+        },
+        {
+          "case_id": "un-03",
+          "category": "unanswerable",
+          "question": "What is the stock price of Northwind Robotics?",
+          "retrieved_chunk_ids": [
+            "edb30016-cf5b-41c8-94e6-46789f013f65",
+            "73a27654-ad62-498c-a131-192b2ae8f6da",
+            "8d96aa6d-8e7f-4759-acc8-6f949eb18f20",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "204e96d5-7c8b-4954-99a4-5067b44b03f1"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 8.39,
+          "error": null
+        },
+        {
+          "case_id": "un-05",
+          "category": "unanswerable",
+          "question": "What is the dress code at the Austin office?",
+          "retrieved_chunk_ids": [
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "81192bb2-438e-4cb4-9032-53e6a2166cbb",
+            "8a8ffd8f-1058-463c-83aa-0fe897944ff9",
+            "136000d5-e26b-4c4b-93ff-6412e300fe84",
+            "73784284-4382-48c3-94b5-fff0409cdd89"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 11.0,
+          "error": null
+        },
+        {
+          "case_id": "un-07",
+          "category": "unanswerable",
+          "question": "Which hospitals are in the health insurance network in Munich?",
+          "retrieved_chunk_ids": [
+            "7e81119d-037a-46c4-879c-940592c7e78d",
+            "b61ff4bf-1639-4c96-bf72-0ab39ce2875f",
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "6839e813-f5b7-433e-82bf-dce745279bde"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": false,
+            "precision@k": null,
+            "top_dense_similarity": null,
+            "top_lexical_coverage": 0.4
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 8.39,
+          "error": null
+        }
+      ]
+    },
+    {
+      "run_id": "8b8563da-eb2c-44cd-a34d-2dbf8561cf6f",
+      "dataset": "atlas-handbook-v1",
+      "dataset_version": "1.1.0",
+      "mode": "hybrid",
+      "config": {
+        "runs": 1,
+        "unit": "chunk",
+        "judge": null,
+        "model": null,
+        "rrf_k": 60,
+        "split": "test",
+        "top_k": 5,
+        "provider": null,
+        "reranker": null,
+        "run_group": "857a0c3c88854a36b5cbb834fcd020de",
+        "run_index": 0,
+        "chunk_size": 1000,
+        "candidate_k": 24,
+        "sample_seed": 13,
+        "answer_sample": null,
+        "chunk_overlap": 150,
+        "document_pool": null,
+        "max_llm_calls": 4,
+        "embedding_model": "nvidia/nvidia/nemotron-3.5-embed-1b@d1024",
+        "include_answers": false,
+        "min_rerank_score": -4.0,
+        "min_dense_similarity": 0.32,
+        "min_lexical_coverage": 0.5,
+        "max_retrieval_attempts": 2
+      },
+      "metrics": {
+        "retrieval": {
+          "mrr": 0.8333,
+          "ndcg@k": 0.863,
+          "recall@k": 1.0,
+          "hit_rate@k": 1.0,
+          "precision@k": 0.224
+        },
+        "case_count": 31,
+        "error_rate": 0.0,
+        "latency_ms": {
+          "retrieval_p50": 56.5,
+          "retrieval_p95": 59.9
+        },
+        "by_category": {
+          "citation": {
+            "mrr": 0.6111,
+            "count": 3,
+            "recall@k": 1.0
+          },
+          "ambiguous": {
+            "mrr": null,
+            "count": 2,
+            "recall@k": null
+          },
+          "injection": {
+            "mrr": 0.75,
+            "count": 2,
+            "recall@k": 1.0
+          },
+          "multi_doc": {
+            "mrr": 1.0,
+            "count": 3,
+            "recall@k": 1.0
+          },
+          "paraphrase": {
+            "mrr": 0.8125,
+            "count": 4,
+            "recall@k": 1.0
+          },
+          "single_doc": {
+            "mrr": 0.9286,
+            "count": 7,
+            "recall@k": 1.0
+          },
+          "conflicting": {
+            "mrr": 0.75,
+            "count": 3,
+            "recall@k": 1.0
+          },
+          "multi_chunk": {
+            "mrr": 0.8333,
+            "count": 3,
+            "recall@k": 1.0
+          },
+          "unanswerable": {
+            "mrr": null,
+            "count": 4,
+            "recall@k": null
+          }
+        },
+        "labelled_case_count": 25
+      },
+      "cases": [
+        {
+          "case_id": "am-01",
+          "category": "ambiguous",
+          "question": "What is the limit?",
+          "retrieved_chunk_ids": [
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "7e81119d-037a-46c4-879c-940592c7e78d"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": 0.21360200383800543,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 58.44,
+          "error": null
+        },
+        {
+          "case_id": "am-03",
+          "category": "ambiguous",
+          "question": "What about the allowance for that?",
+          "retrieved_chunk_ids": [
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "edb30016-cf5b-41c8-94e6-46789f013f65",
+            "44481ed4-f5e1-422a-bb15-76953eb283d5",
+            "81c73aca-41ce-4be2-ab00-af41a912940f"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": 0.32447533515777605,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 54.39,
+          "error": null
+        },
+        {
+          "case_id": "cf-01",
+          "category": "conflicting",
+          "question": "What was the hotel limit under the old 2022 travel policy?",
+          "retrieved_chunk_ids": [
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "204e96d5-7c8b-4954-99a4-5067b44b03f1",
+            "0d138fd0-f1b1-470a-8f23-5fdb5bf54acf",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "edb30016-cf5b-41c8-94e6-46789f013f65"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.5494131203269059,
+            "top_lexical_coverage": 0.667
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 57.15,
+          "error": null
+        },
+        {
+          "case_id": "cf-03",
+          "category": "conflicting",
+          "question": "What is the current mileage reimbursement rate per kilometre?",
+          "retrieved_chunk_ids": [
+            "73a27654-ad62-498c-a131-192b2ae8f6da",
+            "c98ab63e-0cf5-4f29-bd6f-0ed2234ad722",
+            "9eac0496-453e-47d3-a692-b46ba9a612d8",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.25,
+            "ndcg@k": 0.43067655807339306,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.4791148900985751,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 55.93,
+          "error": null
+        },
+        {
+          "case_id": "cf-05",
+          "category": "conflicting",
+          "question": "Which travel policy is currently in force?",
+          "retrieved_chunk_ids": [
+            "0d138fd0-f1b1-470a-8f23-5fdb5bf54acf",
+            "b61ff4bf-1639-4c96-bf72-0ab39ce2875f",
+            "204e96d5-7c8b-4954-99a4-5067b44b03f1",
+            "edb30016-cf5b-41c8-94e6-46789f013f65",
+            "73a27654-ad62-498c-a131-192b2ae8f6da"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 0.9197207891481876,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.4,
+            "top_dense_similarity": 0.48137987761674805,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 54.3,
+          "error": null
+        },
+        {
+          "case_id": "ct-01",
+          "category": "citation",
+          "question": "What does the security handbook say about SMS codes?",
+          "retrieved_chunk_ids": [
+            "a30c5747-b28c-4846-aa1e-6884793194ca",
+            "b909bf24-b44b-4d07-aa6b-072aada6b6dc",
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "cbe6a398-5a40-4309-a355-afe6de32d35a",
+            "8a8ffd8f-1058-463c-83aa-0fe897944ff9"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.3333333333333333,
+            "ndcg@k": 0.5,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.452946559472867,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 56.25,
+          "error": null
+        },
+        {
+          "case_id": "ct-03",
+          "category": "citation",
+          "question": "How many people work at the Lyon headquarters?",
+          "retrieved_chunk_ids": [
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "472f734b-6a53-4d5f-9658-60b4900767ce",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "73784284-4382-48c3-94b5-fff0409cdd89"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.5,
+            "ndcg@k": 0.6309297535714575,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.3534774394915968,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 55.98,
+          "error": null
+        },
+        {
+          "case_id": "ct-05",
+          "category": "citation",
+          "question": "How much does the company contribute to the pension plan?",
+          "retrieved_chunk_ids": [
+            "7e81119d-037a-46c4-879c-940592c7e78d",
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "840f8b58-c5af-4e94-bdc5-35c304d02652",
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "81192bb2-438e-4cb4-9032-53e6a2166cbb"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.3988387100581219,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 57.75,
+          "error": null
+        },
+        {
+          "case_id": "mc-01",
+          "category": "multi_chunk",
+          "question": "When can I fly business class and what approval do I need?",
+          "retrieved_chunk_ids": [
+            "44481ed4-f5e1-422a-bb15-76953eb283d5",
+            "81c73aca-41ce-4be2-ab00-af41a912940f",
+            "f682d07d-ff6c-4b35-8561-87d8120ea58d",
+            "b61ff4bf-1639-4c96-bf72-0ab39ce2875f",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.5,
+            "ndcg@k": 0.6309297535714575,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.4960600851065784,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 56.45,
+          "error": null
+        },
+        {
+          "case_id": "mc-03",
+          "category": "multi_chunk",
+          "question": "What are the severity levels in the on-call runbook?",
+          "retrieved_chunk_ids": [
+            "119bfc61-9186-4178-8dbb-acc284b0932f",
+            "3ad1380e-d941-4162-a622-c28a2ca8adc1",
+            "16ebb5c9-9573-44d7-947b-99c8413e814c",
+            "a59f1949-795d-4d44-81fb-970407b6f2b0",
+            "6839e813-f5b7-433e-82bf-dce745279bde"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.6815430615068909,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 57.54,
+          "error": null
+        },
+        {
+          "case_id": "mc-05",
+          "category": "multi_chunk",
+          "question": "What are the four data classification levels?",
+          "retrieved_chunk_ids": [
+            "8a8ffd8f-1058-463c-83aa-0fe897944ff9",
+            "119bfc61-9186-4178-8dbb-acc284b0932f",
+            "dcf75221-9a47-41ab-83cf-adff66e5bad0",
+            "b909bf24-b44b-4d07-aa6b-072aada6b6dc",
+            "d9dc290e-1e1e-4a8c-a546-2b5a8058985c"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.49310764506045457,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 56.6,
+          "error": null
+        },
+        {
+          "case_id": "md-01",
+          "category": "multi_doc",
+          "question": "Is alcohol reimbursed, either on business trips or as a general expense?",
+          "retrieved_chunk_ids": [
+            "9eac0496-453e-47d3-a692-b46ba9a612d8",
+            "a64aa268-5aed-48ea-b79d-7cd9d4ac7b1b",
+            "f682d07d-ff6c-4b35-8561-87d8120ea58d",
+            "84d01423-e34a-4b57-a814-0a456b157543",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 0.8503449055347546,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.4,
+            "top_dense_similarity": 0.4460809376915459,
+            "top_lexical_coverage": 0.429
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 60.22,
+          "error": null
+        },
+        {
+          "case_id": "md-03",
+          "category": "multi_doc",
+          "question": "Which password manager do we use, and how long must passwords be?",
+          "retrieved_chunk_ids": [
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "81c73aca-41ce-4be2-ab00-af41a912940f",
+            "81192bb2-438e-4cb4-9032-53e6a2166cbb",
+            "cbe6a398-5a40-4309-a355-afe6de32d35a",
+            "d9dc290e-1e1e-4a8c-a546-2b5a8058985c"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 0.9197207891481876,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.4,
+            "top_dense_similarity": 0.5271117095686589,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 59.62,
+          "error": null
+        },
+        {
+          "case_id": "md-05",
+          "category": "multi_doc",
+          "question": "How fast must I report a lost laptop, and to whom?",
+          "retrieved_chunk_ids": [
+            "b909bf24-b44b-4d07-aa6b-072aada6b6dc",
+            "dcf75221-9a47-41ab-83cf-adff66e5bad0",
+            "136000d5-e26b-4c4b-93ff-6412e300fe84",
+            "cbe6a398-5a40-4309-a355-afe6de32d35a",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.420004260542548,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 58.91,
+          "error": null
+        },
+        {
+          "case_id": "pi-01",
+          "category": "injection",
+          "question": "Are there any notices about hotel limits I should know about?",
+          "retrieved_chunk_ids": [
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "81c73aca-41ce-4be2-ab00-af41a912940f"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.5,
+            "ndcg@k": 0.6309297535714575,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.4260043750417366,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 54.36,
+          "error": null
+        },
+        {
+          "case_id": "pi-03",
+          "category": "injection",
+          "question": "What is the maximum hotel rate per night in Paris?",
+          "retrieved_chunk_ids": [
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.5262756661113798,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 56.69,
+          "error": null
+        },
+        {
+          "case_id": "pp-01",
+          "category": "paraphrase",
+          "question": "What's the nightly cap on accommodation costs in the UK capital?",
+          "retrieved_chunk_ids": [
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "a64aa268-5aed-48ea-b79d-7cd9d4ac7b1b",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.3938330654797655,
+            "top_lexical_coverage": 0.286
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 57.99,
+          "error": null
+        },
+        {
+          "case_id": "pp-03",
+          "category": "paraphrase",
+          "question": "Can I bring personal USB sticks to move files off my work computer?",
+          "retrieved_chunk_ids": [
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654",
+            "cbe6a398-5a40-4309-a355-afe6de32d35a",
+            "472f734b-6a53-4d5f-9658-60b4900767ce"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.25,
+            "ndcg@k": 0.43067655807339306,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": false,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.25609190798357284,
+            "top_lexical_coverage": 0.125
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 58.69,
+          "error": null
+        },
+        {
+          "case_id": "pp-05",
+          "category": "paraphrase",
+          "question": "For how long am I allowed to work from a foreign country each year?",
+          "retrieved_chunk_ids": [
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a",
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "472f734b-6a53-4d5f-9658-60b4900767ce"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.5561867825159443,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 55.83,
+          "error": null
+        },
+        {
+          "case_id": "pp-07",
+          "category": "paraphrase",
+          "question": "How precisely can the smaller robot arm return to the same position?",
+          "retrieved_chunk_ids": [
+            "8d96aa6d-8e7f-4759-acc8-6f949eb18f20",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2",
+            "204e96d5-7c8b-4954-99a4-5067b44b03f1",
+            "0d138fd0-f1b1-470a-8f23-5fdb5bf54acf",
+            "73a27654-ad62-498c-a131-192b2ae8f6da"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": false,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.3063492308060516,
+            "top_lexical_coverage": 0.333
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 57.08,
+          "error": null
+        },
+        {
+          "case_id": "sd-01",
+          "category": "single_doc",
+          "question": "How much is the hotel limit per night in London?",
+          "retrieved_chunk_ids": [
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "dcf75221-9a47-41ab-83cf-adff66e5bad0"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.5518825179235641,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 53.98,
+          "error": null
+        },
+        {
+          "case_id": "sd-03",
+          "category": "single_doc",
+          "question": "How long must passwords be?",
+          "retrieved_chunk_ids": [
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "81c73aca-41ce-4be2-ab00-af41a912940f",
+            "81192bb2-438e-4cb4-9032-53e6a2166cbb",
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654",
+            "d9dc290e-1e1e-4a8c-a546-2b5a8058985c"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.48030856744193184,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 57.32,
+          "error": null
+        },
+        {
+          "case_id": "sd-05",
+          "category": "single_doc",
+          "question": "How many days per week can employees work remotely?",
+          "retrieved_chunk_ids": [
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "472f734b-6a53-4d5f-9658-60b4900767ce",
+            "2658232b-e03b-4d5b-a9c6-2e1ff70e7540"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.5456440448762382,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 56.03,
+          "error": null
+        },
+        {
+          "case_id": "sd-07",
+          "category": "single_doc",
+          "question": "How many weeks of parental leave do non-birthing parents get?",
+          "retrieved_chunk_ids": [
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2",
+            "840f8b58-c5af-4e94-bdc5-35c304d02652",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "9eac0496-453e-47d3-a692-b46ba9a612d8"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.4480438046612073,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 55.18,
+          "error": null
+        },
+        {
+          "case_id": "sd-09",
+          "category": "single_doc",
+          "question": "Who is the site lead of the Munich office?",
+          "retrieved_chunk_ids": [
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "136000d5-e26b-4c4b-93ff-6412e300fe84",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.4556455615789148,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 56.61,
+          "error": null
+        },
+        {
+          "case_id": "sd-11",
+          "category": "single_doc",
+          "question": "What is the mileage rate for using a private car?",
+          "retrieved_chunk_ids": [
+            "73a27654-ad62-498c-a131-192b2ae8f6da",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656",
+            "c98ab63e-0cf5-4f29-bd6f-0ed2234ad722",
+            "dcf75221-9a47-41ab-83cf-adff66e5bad0",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.5,
+            "ndcg@k": 0.6309297535714575,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.486548954596701,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 54.95,
+          "error": null
+        },
+        {
+          "case_id": "sd-13",
+          "category": "single_doc",
+          "question": "What is the battery life of the Rover R2?",
+          "retrieved_chunk_ids": [
+            "8d96aa6d-8e7f-4759-acc8-6f949eb18f20",
+            "44481ed4-f5e1-422a-bb15-76953eb283d5",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656",
+            "73a27654-ad62-498c-a131-192b2ae8f6da",
+            "119bfc61-9186-4178-8dbb-acc284b0932f"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.250213310313226,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 55.75,
+          "error": null
+        },
+        {
+          "case_id": "un-01",
+          "category": "unanswerable",
+          "question": "What is the company policy on bringing pets to the office?",
+          "retrieved_chunk_ids": [
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654",
+            "b61ff4bf-1639-4c96-bf72-0ab39ce2875f",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": 0.2636328935623844,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 59.86,
+          "error": null
+        },
+        {
+          "case_id": "un-03",
+          "category": "unanswerable",
+          "question": "What is the stock price of Northwind Robotics?",
+          "retrieved_chunk_ids": [
+            "8d96aa6d-8e7f-4759-acc8-6f949eb18f20",
+            "73a27654-ad62-498c-a131-192b2ae8f6da",
+            "edb30016-cf5b-41c8-94e6-46789f013f65",
+            "0d138fd0-f1b1-470a-8f23-5fdb5bf54acf",
+            "204e96d5-7c8b-4954-99a4-5067b44b03f1"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": 0.40859828200300474,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 55.94,
+          "error": null
+        },
+        {
+          "case_id": "un-05",
+          "category": "unanswerable",
+          "question": "What is the dress code at the Austin office?",
+          "retrieved_chunk_ids": [
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "81192bb2-438e-4cb4-9032-53e6a2166cbb",
+            "136000d5-e26b-4c4b-93ff-6412e300fe84",
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "873b01b0-7855-4279-9226-9a419c6be6da"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": 0.3022365527794526,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 55.06,
+          "error": null
+        },
+        {
+          "case_id": "un-07",
+          "category": "unanswerable",
+          "question": "Which hospitals are in the health insurance network in Munich?",
+          "retrieved_chunk_ids": [
+            "7e81119d-037a-46c4-879c-940592c7e78d",
+            "b61ff4bf-1639-4c96-bf72-0ab39ce2875f",
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "6839e813-f5b7-433e-82bf-dce745279bde"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": false,
+            "precision@k": null,
+            "top_dense_similarity": 0.18119574632340407,
+            "top_lexical_coverage": 0.4
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 52.62,
+          "error": null
+        }
+      ]
+    },
+    {
+      "run_id": "1bce0303-44d8-4d8a-bb30-b5917988c1e4",
+      "dataset": "atlas-handbook-v1",
+      "dataset_version": "1.1.0",
+      "mode": "hybrid_rerank",
+      "config": {
+        "runs": 1,
+        "unit": "chunk",
+        "judge": null,
+        "model": null,
+        "rrf_k": 60,
+        "split": "test",
+        "top_k": 5,
+        "provider": null,
+        "reranker": "local/Xenova/ms-marco-MiniLM-L-6-v2",
+        "run_group": "857a0c3c88854a36b5cbb834fcd020de",
+        "run_index": 0,
+        "chunk_size": 1000,
+        "candidate_k": 24,
+        "sample_seed": 13,
+        "answer_sample": null,
+        "chunk_overlap": 150,
+        "document_pool": null,
+        "max_llm_calls": 4,
+        "embedding_model": "nvidia/nvidia/nemotron-3.5-embed-1b@d1024",
+        "include_answers": false,
+        "min_rerank_score": -4.0,
+        "min_dense_similarity": 0.32,
+        "min_lexical_coverage": 0.5,
+        "max_retrieval_attempts": 2
+      },
+      "metrics": {
+        "retrieval": {
+          "mrr": 0.8413,
+          "ndcg@k": 0.8784,
+          "recall@k": 1.0,
+          "hit_rate@k": 1.0,
+          "precision@k": 0.224
+        },
+        "case_count": 31,
+        "error_rate": 0.0,
+        "latency_ms": {
+          "retrieval_p50": 1400.8,
+          "retrieval_p95": 2484.6
+        },
+        "by_category": {
+          "citation": {
+            "mrr": 0.8333,
+            "count": 3,
+            "recall@k": 1.0
+          },
+          "ambiguous": {
+            "mrr": null,
+            "count": 2,
+            "recall@k": null
+          },
+          "injection": {
+            "mrr": 0.75,
+            "count": 2,
+            "recall@k": 1.0
+          },
+          "multi_doc": {
+            "mrr": 1.0,
+            "count": 3,
+            "recall@k": 1.0
+          },
+          "paraphrase": {
+            "mrr": 1.0,
+            "count": 4,
+            "recall@k": 1.0
+          },
+          "single_doc": {
+            "mrr": 0.9286,
+            "count": 7,
+            "recall@k": 1.0
+          },
+          "conflicting": {
+            "mrr": 0.5667,
+            "count": 3,
+            "recall@k": 1.0
+          },
+          "multi_chunk": {
+            "mrr": 0.6111,
+            "count": 3,
+            "recall@k": 1.0
+          },
+          "unanswerable": {
+            "mrr": null,
+            "count": 4,
+            "recall@k": null
+          }
+        },
+        "labelled_case_count": 25
+      },
+      "cases": [
+        {
+          "case_id": "am-01",
+          "category": "ambiguous",
+          "question": "What is the limit?",
+          "retrieved_chunk_ids": [
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "73a27654-ad62-498c-a131-192b2ae8f6da"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": false,
+            "precision@k": null,
+            "top_dense_similarity": 0.21360200383800543,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 994.48,
+          "error": null
+        },
+        {
+          "case_id": "am-03",
+          "category": "ambiguous",
+          "question": "What about the allowance for that?",
+          "retrieved_chunk_ids": [
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "edb30016-cf5b-41c8-94e6-46789f013f65",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656",
+            "873b01b0-7855-4279-9226-9a419c6be6da"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": 0.32447533515777605,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1866.64,
+          "error": null
+        },
+        {
+          "case_id": "cf-01",
+          "category": "conflicting",
+          "question": "What was the hotel limit under the old 2022 travel policy?",
+          "retrieved_chunk_ids": [
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "0d138fd0-f1b1-470a-8f23-5fdb5bf54acf",
+            "204e96d5-7c8b-4954-99a4-5067b44b03f1",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.2,
+            "ndcg@k": 0.38685280723454163,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.5494131203269059,
+            "top_lexical_coverage": 0.667
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 973.02,
+          "error": null
+        },
+        {
+          "case_id": "cf-03",
+          "category": "conflicting",
+          "question": "What is the current mileage reimbursement rate per kilometre?",
+          "retrieved_chunk_ids": [
+            "73a27654-ad62-498c-a131-192b2ae8f6da",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "9eac0496-453e-47d3-a692-b46ba9a612d8"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.5,
+            "ndcg@k": 0.6309297535714575,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.4791148900985751,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1687.62,
+          "error": null
+        },
+        {
+          "case_id": "cf-05",
+          "category": "conflicting",
+          "question": "Which travel policy is currently in force?",
+          "retrieved_chunk_ids": [
+            "204e96d5-7c8b-4954-99a4-5067b44b03f1",
+            "0d138fd0-f1b1-470a-8f23-5fdb5bf54acf",
+            "b61ff4bf-1639-4c96-bf72-0ab39ce2875f",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.4,
+            "top_dense_similarity": 0.48137987761674805,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 759.87,
+          "error": null
+        },
+        {
+          "case_id": "ct-01",
+          "category": "citation",
+          "question": "What does the security handbook say about SMS codes?",
+          "retrieved_chunk_ids": [
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "b909bf24-b44b-4d07-aa6b-072aada6b6dc",
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654",
+            "a30c5747-b28c-4846-aa1e-6884793194ca",
+            "8a8ffd8f-1058-463c-83aa-0fe897944ff9"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.452946559472867,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 570.91,
+          "error": null
+        },
+        {
+          "case_id": "ct-03",
+          "category": "citation",
+          "question": "How many people work at the Lyon headquarters?",
+          "retrieved_chunk_ids": [
+            "136000d5-e26b-4c4b-93ff-6412e300fe84",
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "472f734b-6a53-4d5f-9658-60b4900767ce",
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.5,
+            "ndcg@k": 0.6309297535714575,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.3534774394915968,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1751.99,
+          "error": null
+        },
+        {
+          "case_id": "ct-05",
+          "category": "citation",
+          "question": "How much does the company contribute to the pension plan?",
+          "retrieved_chunk_ids": [
+            "7e81119d-037a-46c4-879c-940592c7e78d",
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "73a27654-ad62-498c-a131-192b2ae8f6da",
+            "edb30016-cf5b-41c8-94e6-46789f013f65",
+            "873b01b0-7855-4279-9226-9a419c6be6da"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.3988387100581219,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1266.67,
+          "error": null
+        },
+        {
+          "case_id": "mc-01",
+          "category": "multi_chunk",
+          "question": "When can I fly business class and what approval do I need?",
+          "retrieved_chunk_ids": [
+            "44481ed4-f5e1-422a-bb15-76953eb283d5",
+            "81c73aca-41ce-4be2-ab00-af41a912940f",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656",
+            "b61ff4bf-1639-4c96-bf72-0ab39ce2875f",
+            "f682d07d-ff6c-4b35-8561-87d8120ea58d"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.5,
+            "ndcg@k": 0.6309297535714575,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.4960600851065784,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1240.86,
+          "error": null
+        },
+        {
+          "case_id": "mc-03",
+          "category": "multi_chunk",
+          "question": "What are the severity levels in the on-call runbook?",
+          "retrieved_chunk_ids": [
+            "3ad1380e-d941-4162-a622-c28a2ca8adc1",
+            "a59f1949-795d-4d44-81fb-970407b6f2b0",
+            "119bfc61-9186-4178-8dbb-acc284b0932f",
+            "136000d5-e26b-4c4b-93ff-6412e300fe84",
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.3333333333333333,
+            "ndcg@k": 0.5,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": false,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.6815430615068909,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 2052.84,
+          "error": null
+        },
+        {
+          "case_id": "mc-05",
+          "category": "multi_chunk",
+          "question": "What are the four data classification levels?",
+          "retrieved_chunk_ids": [
+            "8a8ffd8f-1058-463c-83aa-0fe897944ff9",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656",
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "8d96aa6d-8e7f-4759-acc8-6f949eb18f20",
+            "873b01b0-7855-4279-9226-9a419c6be6da"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.49310764506045457,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1873.48,
+          "error": null
+        },
+        {
+          "case_id": "md-01",
+          "category": "multi_doc",
+          "question": "Is alcohol reimbursed, either on business trips or as a general expense?",
+          "retrieved_chunk_ids": [
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "9eac0496-453e-47d3-a692-b46ba9a612d8",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656",
+            "873b01b0-7855-4279-9226-9a419c6be6da"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.4,
+            "top_dense_similarity": 0.4460809376915459,
+            "top_lexical_coverage": 0.429
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 763.26,
+          "error": null
+        },
+        {
+          "case_id": "md-03",
+          "category": "multi_doc",
+          "question": "Which password manager do we use, and how long must passwords be?",
+          "retrieved_chunk_ids": [
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "cbe6a398-5a40-4309-a355-afe6de32d35a",
+            "81192bb2-438e-4cb4-9032-53e6a2166cbb",
+            "d9dc290e-1e1e-4a8c-a546-2b5a8058985c",
+            "b909bf24-b44b-4d07-aa6b-072aada6b6dc"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 0.9197207891481876,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.4,
+            "top_dense_similarity": 0.5271117095686589,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1051.77,
+          "error": null
+        },
+        {
+          "case_id": "md-05",
+          "category": "multi_doc",
+          "question": "How fast must I report a lost laptop, and to whom?",
+          "retrieved_chunk_ids": [
+            "b909bf24-b44b-4d07-aa6b-072aada6b6dc",
+            "dcf75221-9a47-41ab-83cf-adff66e5bad0",
+            "cbe6a398-5a40-4309-a355-afe6de32d35a",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2",
+            "16ebb5c9-9573-44d7-947b-99c8413e814c"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.420004260542548,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1146.79,
+          "error": null
+        },
+        {
+          "case_id": "pi-01",
+          "category": "injection",
+          "question": "Are there any notices about hotel limits I should know about?",
+          "retrieved_chunk_ids": [
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "9eac0496-453e-47d3-a692-b46ba9a612d8"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.5,
+            "ndcg@k": 0.6309297535714575,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.4260043750417366,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1406.69,
+          "error": null
+        },
+        {
+          "case_id": "pi-03",
+          "category": "injection",
+          "question": "What is the maximum hotel rate per night in Paris?",
+          "retrieved_chunk_ids": [
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "edb30016-cf5b-41c8-94e6-46789f013f65"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.5262756661113798,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 2456.65,
+          "error": null
+        },
+        {
+          "case_id": "pp-01",
+          "category": "paraphrase",
+          "question": "What's the nightly cap on accommodation costs in the UK capital?",
+          "retrieved_chunk_ids": [
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "edb30016-cf5b-41c8-94e6-46789f013f65",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.3938330654797655,
+            "top_lexical_coverage": 0.286
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 968.97,
+          "error": null
+        },
+        {
+          "case_id": "pp-03",
+          "category": "paraphrase",
+          "question": "Can I bring personal USB sticks to move files off my work computer?",
+          "retrieved_chunk_ids": [
+            "cbe6a398-5a40-4309-a355-afe6de32d35a",
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2",
+            "136000d5-e26b-4c4b-93ff-6412e300fe84",
+            "472f734b-6a53-4d5f-9658-60b4900767ce"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": false,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.25609190798357284,
+            "top_lexical_coverage": 0.125
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1000.16,
+          "error": null
+        },
+        {
+          "case_id": "pp-05",
+          "category": "paraphrase",
+          "question": "For how long am I allowed to work from a foreign country each year?",
+          "retrieved_chunk_ids": [
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a",
+            "dcf75221-9a47-41ab-83cf-adff66e5bad0",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "81c73aca-41ce-4be2-ab00-af41a912940f"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.5561867825159443,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1791.81,
+          "error": null
+        },
+        {
+          "case_id": "pp-07",
+          "category": "paraphrase",
+          "question": "How precisely can the smaller robot arm return to the same position?",
+          "retrieved_chunk_ids": [
+            "8d96aa6d-8e7f-4759-acc8-6f949eb18f20",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2",
+            "119bfc61-9186-4178-8dbb-acc284b0932f",
+            "840f8b58-c5af-4e94-bdc5-35c304d02652",
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": false,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.3063492308060516,
+            "top_lexical_coverage": 0.333
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1712.61,
+          "error": null
+        },
+        {
+          "case_id": "sd-01",
+          "category": "single_doc",
+          "question": "How much is the hotel limit per night in London?",
+          "retrieved_chunk_ids": [
+            "165fa674-15bf-4e46-9b50-8431872c22fe",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "f3208d9a-746b-42fd-b028-46d5a69d1626",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "edb30016-cf5b-41c8-94e6-46789f013f65"
+          ],
+          "retrieval_metrics": {
+            "mrr": 0.5,
+            "ndcg@k": 0.6309297535714575,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.5518825179235641,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 3771.61,
+          "error": null
+        },
+        {
+          "case_id": "sd-03",
+          "category": "single_doc",
+          "question": "How long must passwords be?",
+          "retrieved_chunk_ids": [
+            "bc19a276-04f8-4090-a60d-413c77f3c6ee",
+            "cbe6a398-5a40-4309-a355-afe6de32d35a",
+            "b909bf24-b44b-4d07-aa6b-072aada6b6dc",
+            "a64aa268-5aed-48ea-b79d-7cd9d4ac7b1b",
+            "d9dc290e-1e1e-4a8c-a546-2b5a8058985c"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.48030856744193184,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1583.81,
+          "error": null
+        },
+        {
+          "case_id": "sd-05",
+          "category": "single_doc",
+          "question": "How many days per week can employees work remotely?",
+          "retrieved_chunk_ids": [
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2",
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.5456440448762382,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1400.77,
+          "error": null
+        },
+        {
+          "case_id": "sd-07",
+          "category": "single_doc",
+          "question": "How many weeks of parental leave do non-birthing parents get?",
+          "retrieved_chunk_ids": [
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a",
+            "4656cae0-0fb9-4a16-b3c0-c2022d97e17a",
+            "6c34817a-ff60-43e2-be24-75790a1b5e82",
+            "16ebb5c9-9573-44d7-947b-99c8413e814c",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.4480438046612073,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1170.64,
+          "error": null
+        },
+        {
+          "case_id": "sd-09",
+          "category": "single_doc",
+          "question": "Who is the site lead of the Munich office?",
+          "retrieved_chunk_ids": [
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "472f734b-6a53-4d5f-9658-60b4900767ce",
+            "136000d5-e26b-4c4b-93ff-6412e300fe84",
+            "334988fd-d0e2-4a0c-9bac-31eb16f25d0e",
+            "873b01b0-7855-4279-9226-9a419c6be6da"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.4556455615789148,
+            "top_lexical_coverage": 1.0
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1679.02,
+          "error": null
+        },
+        {
+          "case_id": "sd-11",
+          "category": "single_doc",
+          "question": "What is the mileage rate for using a private car?",
+          "retrieved_chunk_ids": [
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656",
+            "73a27654-ad62-498c-a131-192b2ae8f6da",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "cf2c9e84-a572-4d0b-a2cc-b51ffe8776f7",
+            "edb30016-cf5b-41c8-94e6-46789f013f65"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.486548954596701,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1218.13,
+          "error": null
+        },
+        {
+          "case_id": "sd-13",
+          "category": "single_doc",
+          "question": "What is the battery life of the Rover R2?",
+          "retrieved_chunk_ids": [
+            "8d96aa6d-8e7f-4759-acc8-6f949eb18f20",
+            "16ebb5c9-9573-44d7-947b-99c8413e814c",
+            "472f734b-6a53-4d5f-9658-60b4900767ce",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "ceaab8fd-0c3c-4639-a897-3a53c07e7656"
+          ],
+          "retrieval_metrics": {
+            "mrr": 1.0,
+            "ndcg@k": 1.0,
+            "recall@k": 1.0,
+            "hit_rate@k": 1.0,
+            "sufficient": true,
+            "precision@k": 0.2,
+            "top_dense_similarity": 0.250213310313226,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 2484.59,
+          "error": null
+        },
+        {
+          "case_id": "un-01",
+          "category": "unanswerable",
+          "question": "What is the company policy on bringing pets to the office?",
+          "retrieved_chunk_ids": [
+            "7fd590e0-6a63-4c67-af3f-3fbff47dc654",
+            "b61ff4bf-1639-4c96-bf72-0ab39ce2875f",
+            "abb63b3e-99b3-44d1-96ca-e5a9a3aa15d2",
+            "73784284-4382-48c3-94b5-fff0409cdd89",
+            "9eac0496-453e-47d3-a692-b46ba9a612d8"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": false,
+            "precision@k": null,
+            "top_dense_similarity": 0.2581808086953741,
+            "top_lexical_coverage": 0.6
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 860.26,
+          "error": null
+        },
+        {
+          "case_id": "un-03",
+          "category": "unanswerable",
+          "question": "What is the stock price of Northwind Robotics?",
+          "retrieved_chunk_ids": [
+            "8d96aa6d-8e7f-4759-acc8-6f949eb18f20",
+            "840f8b58-c5af-4e94-bdc5-35c304d02652",
+            "84d01423-e34a-4b57-a814-0a456b157543",
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a",
+            "8a8ffd8f-1058-463c-83aa-0fe897944ff9"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": true,
+            "precision@k": null,
+            "top_dense_similarity": 0.40859828200300474,
+            "top_lexical_coverage": 0.75
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1794.99,
+          "error": null
+        },
+        {
+          "case_id": "un-05",
+          "category": "unanswerable",
+          "question": "What is the dress code at the Austin office?",
+          "retrieved_chunk_ids": [
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "136000d5-e26b-4c4b-93ff-6412e300fe84",
+            "873b01b0-7855-4279-9226-9a419c6be6da",
+            "8a8ffd8f-1058-463c-83aa-0fe897944ff9",
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": false,
+            "precision@k": null,
+            "top_dense_similarity": 0.3022365527794526,
+            "top_lexical_coverage": 0.5
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1013.8,
+          "error": null
+        },
+        {
+          "case_id": "un-07",
+          "category": "unanswerable",
+          "question": "Which hospitals are in the health insurance network in Munich?",
+          "retrieved_chunk_ids": [
+            "028092ee-6de8-4b53-bb04-7a9ba55d4931",
+            "7e81119d-037a-46c4-879c-940592c7e78d",
+            "8d96aa6d-8e7f-4759-acc8-6f949eb18f20",
+            "81c73aca-41ce-4be2-ab00-af41a912940f",
+            "fc41b8a8-ec90-4bc0-9e3b-b6f091fa918a"
+          ],
+          "retrieval_metrics": {
+            "mrr": null,
+            "ndcg@k": null,
+            "recall@k": null,
+            "hit_rate@k": null,
+            "sufficient": false,
+            "precision@k": null,
+            "top_dense_similarity": 0.18119574632340407,
+            "top_lexical_coverage": 0.4
+          },
+          "answer_metrics": {},
+          "answer": null,
+          "latency_ms": 1690.07,
+          "error": null
+        }
+      ]
+    }
+  ],
+  "failed_runs": []
+}

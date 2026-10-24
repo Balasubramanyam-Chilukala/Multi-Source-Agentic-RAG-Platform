@@ -58,49 +58,60 @@ Atlas AI has the following parts:
 
 ## Experiments
 
-The dataset is version-controlled (60 cases, 9 categories, 11 documents, phrase-based relevance
-labels verified against chunks before every run). All four retrieval configurations used the
-same cases, labels, and k = 5.
+The first benchmark was a single run over a 60-question, author-written handbook set, and its
+threshold was tuned on the same questions. A review called it too easy and too self-referential,
+so the evaluation was rebuilt around held-out data:
 
-| Mode | Recall@5 | MRR | nDCG@5 | p50 latency |
-|---|---|---|---|---|
-| dense | 1.000 | 0.949 | 0.961 | 537 ms |
-| lexical | 0.918 | 0.777 | 0.801 | 25 ms |
-| hybrid (RRF) | 1.000 | 0.905 | 0.923 | 599 ms |
-| hybrid + local rerank | 1.000 | 0.871 | 0.902 | 2,068 ms |
+- **Splits.** The handbook was split 29 dev / 31 test, stratified by category. A public corpus,
+  BEIR SciFact (5,183 abstracts), was added: its official train qrels are dev and its 300 test
+  claims are held out. Tuning happens on dev only.
+- **Repetitions and significance.** Three repetitions per configuration, with a paired
+  bootstrap CI for every mode-vs-hybrid comparison.
+- **Model-judged faithfulness.** A judge from a different model family scores whether each
+  cited sentence is supported by its passages. It is reported next to the structural proxy, and
+  checked first against 32 hand-labelled pairs: 0.906 exact and 0.969 binary agreement, with no
+  false "supported" verdicts.
 
-End-to-end with Groq gpt-oss-120b on hybrid retrieval, using deterministic reference checks
-(no LLM judge):
-
-| Metric | Result |
+| Result (test splits) | Value |
 |---|---|
-| Correctness | 0.967 |
-| Citation precision | 0.990 |
-| Abstention accuracy | 0.967 (all unanswerable questions declined) |
-| Injected content in answers | 0.000 |
-| End-to-end latency | p50 1.46 s, p95 4.0 s |
+| SciFact nDCG@10: dense / hybrid / hybrid + rerank / lexical | 0.745 / 0.633 / 0.704 / 0.401 |
+| Handbook MRR: dense / hybrid | 0.940 / 0.833 (Δ +0.107, CI [+0.027, +0.200]) |
+| Answer correctness (gpt-oss-20b, 3 runs) | 0.925 ± 0.019 |
+| Citation precision | 1.000 |
+| Judged faithfulness | 0.986 ± 0.025 (77 claims) |
+| Abstention accuracy | 0.925 ± 0.019 |
+| Injected or superseded content | 0 of 93 answers |
 
 ## What the measurements changed
 
-- **Lexical retrieval alone fails on paraphrases**, which the embedding model fixes; that is
-  the expected result.
-- **On this small corpus dense retrieval ranks slightly better than hybrid.** Hybrid stays the
-  default as a robustness choice for exact identifiers. That is a judgement, not a measured
-  benefit here, and the docs say so.
-- **The small reranker hurt** (MRR −0.034) and cost about 1.5 s on CPU, so it ships off by
-  default rather than as a box ticked.
-- **Error analysis found two real bugs and one metric bug:**
-  - The router treated existential "there" as a back-reference and asked a pointless
-    clarification question.
-  - A citation-format mismatch: gpt-oss writes `【S1】`, which made the validator reject correct
-    answers. Mocks could not have revealed this; a live smoke test did.
-  - The metric bug: a non-breaking hyphen in "post‑mortem" scored a correct answer as wrong.
-  The fixes raised correctness from 0.950 to 0.967. The remaining misses are documented: one
-  ambiguity weakness, and one case of run-to-run LLM variance.
+- **The default retrieval mode is the wrong one.** Dense beats hybrid significantly on both
+  test sets. On SciFact, PostgreSQL's `ts_rank_cd` (no IDF) reaches 0.401 nDCG@10 against about
+  0.67 for BM25 in the literature, and equal-weight RRF lets it drag good dense hits down. The
+  small single-run handbook benchmark had hinted at this (MRR −0.044); the public corpus made it
+  unambiguous. The fix is a dense default or BM25 for the lexical leg.
+- **The reranker is corpus-dependent.** It helps significantly on SciFact (+0.072 MRR), makes no
+  significant difference on the handbook, and costs 1.4–3.7 s on CPU. It stays optional.
+- **The held-out split exposed a threshold that only looked perfect.** Tuned on all 60
+  questions, the gate passed every answerable one. Tuned on dev only, it blocks one answerable
+  test paraphrase. That miss is reported, not re-tuned away.
+- **Building the measurement found more bugs than the measurements did.** The six problems
+  listed in [retrieval-and-evaluation.md](retrieval-and-evaluation.md#measurement-problems-found-during-this-work)
+  would each have published a wrong number:
+  - chunk-level scoring of document qrels
+  - truncated judge JSON
+  - unwrapped single verdicts
+  - judge passages without document titles
+  - judge outages counted as answer errors
+  - free-tier token limits scored as wrong answers
+- **Earlier error analysis found two real agent bugs and one metric bug:**
+  - The router treated existential "there" as a back-reference.
+  - gpt-oss writes `【S1】` citations, which the validator rejected. Mocks could not have revealed
+    this; a live smoke test did.
+  - A non-breaking hyphen made a correct answer score as wrong.
 
 ## Verification
 
-- **Tests:** 234 backend tests (unit, plus integration tests against real PostgreSQL) and 49
+- **Tests:** 261 backend tests (unit, plus integration tests against real PostgreSQL) and 49
   frontend tests, plus a Playwright journey in a real browser.
 - **Static checks:** strict mypy, Ruff, and ESLint all clean.
 - **Live runs:** with real Groq and NVIDIA calls through the Docker container, including SSE
@@ -114,10 +125,11 @@ End-to-end with Groq gpt-oss-120b on hybrid retrieval, using deterministic refer
 
 ## Limitations
 
-- The corpus is small, so recall saturates.
-- Thresholds were calibrated on the evaluation set (no held-out split).
-- Each configuration was run once.
-- Answer metrics are string-based checks, not entailment.
+- The domain test split is small (31 questions), and it, the judge calibration set, and their
+  labels were written by the project author. SciFact covers retrieval only.
+- Judged faithfulness is model-judged, calibrated on 32 pairs; it is not ground truth.
+- The primary generator (`gpt-oss-120b`) still needs a 3-repetition answer run on the new
+  protocol; Groq's free 200k tokens per day ran out during the attempt.
 - Authentication lacks password reset, MFA, and invitations.
 - Rate limits and locks are in-process (single instance).
 - There is no OCR.
