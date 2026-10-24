@@ -78,6 +78,17 @@ files = ["app", "migrations", "tests"]
 module = ["pgvector.*"]
 ignore_missing_imports = true
 
+# Optional extras (`rerank-local`, `observability`): imported lazily inside guarded code paths,
+# so the default install (and CI) type-checks without them.
+[[tool.mypy.overrides]]
+module = [
+    "fastembed.*",
+    "opentelemetry.exporter.*",
+    "opentelemetry.instrumentation.*",
+    "opentelemetry.sdk.*",
+]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
