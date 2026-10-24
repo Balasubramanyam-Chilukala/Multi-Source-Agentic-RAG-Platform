@@ -40,7 +40,7 @@
 - [x] Evaluation dashboard (mode comparison chart, history, run detail) and run inspector (waterfall, attempts)
 - [x] Settings (workspace vs. server configuration), role gating, light/dark, 375 px responsive
 - [x] 49 component tests; Playwright journey passed against a live (mock-provider) backend
-- [x] nginx Docker image (non-root, CSP, SPA fallback) and Vercel config
+- [x] nginx Docker image (non-root, CSP, SPA fallback); Render static-site config
 
 ## Phase 5 — Evaluation and observability
 - [x] Versioned dataset: 60 cases, 9 categories, 11 documents, verified relevance labels
@@ -63,8 +63,9 @@
 - [x] GitHub Actions: lint, types, tests with pgvector service, migrations, benchmark smoke, audits, Docker builds, gitleaks
 - [x] Backend image (multi-stage, non-root, ~110 MiB idle) and Compose
 - [x] Render blueprint, entrypoint migration strategy, deployment guide
-- [ ] Public deployment — requires the owner's Neon/Render/Vercel/GitHub accounts (steps in `docs/deployment.md`)
-- [ ] CI run on GitHub — the repository has no remote yet
+- [x] Code pushed to GitHub
+- [ ] Public deployment — requires the owner's Render and Neon accounts (steps in `docs/deployment.md`)
+- [ ] First CI run on GitHub — check the Actions tab
 
 ## Phase 8 — Portfolio
 - [x] README with measured results, case study, troubleshooting

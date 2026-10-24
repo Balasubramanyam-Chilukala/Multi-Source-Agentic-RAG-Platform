@@ -1,135 +1,152 @@
-# Deployment (free tier)
+# Deployment (Render + Neon, free tier)
 
-**Status: not deployed yet.** Everything below is prepared and the container is verified locally
-(healthy, about 110 MiB RAM at idle). Publishing requires your GitHub, Neon, Render, and Vercel
-accounts, which only you can authorize. No live URL exists until you complete these steps.
+**Status:** the code is on GitHub and both builds were reproduced locally exactly as the Render
+blueprint runs them. The backend image passed its health checks and used about 110 MiB RAM at
+idle; the frontend build ran from a clean `npm ci`. The deployment itself needs your Render and
+Neon accounts. Add the live URL to the README only after the smoke test in Step 6 passes.
 
 ## Architecture and why
 
 | Part | Host | Free-tier facts (checked 2026-10-24) |
 |---|---|---|
-| PostgreSQL + pgvector | **Neon** Free | 1 GB storage per project (writes blocked above it), 100 CU-hours/month per project, pgvector supported, compute scales to zero after 5 min idle, no card required, permanent (not a trial) |
-| Backend (Docker) | **Render** Free web service | 512 MB RAM / 0.1 CPU; spins down after 15 min without traffic, first request then takes about 1 min; 750 instance-hours/month; ephemeral filesystem |
-| Frontend (static SPA) | **Vercel** Hobby | Free, personal and non-commercial use only; 100 GB/month fast data transfer |
+| Backend (Docker) | **Render** free web service | 512 MB RAM and 0.1 CPU. Spins down after 15 min with no traffic; the next request then takes about 1 min. 750 instance-hours per month. Ephemeral filesystem. |
+| Frontend (static SPA) | **Render** static site | Free. Served from Render's CDN. |
+| PostgreSQL + pgvector | **Neon** Free | 1 GB storage per project (writes are blocked above it). 100 CU-hours per month. pgvector supported. Scales to zero after 5 min idle. No card required, and it is permanent, not a trial. |
 
-Render's own free PostgreSQL is **not** used: it expires 30 days after creation and is then
-deleted. Persistent data therefore lives only in Neon. Nothing user-related is written to the
-Render filesystem: uploads are stored in Postgres until processed.
+**Why Neon instead of Render's database:** Render's free PostgreSQL expires 30 days after
+creation and is then deleted, so the data lives in Neon. Nothing user-related is written to the
+Render filesystem; uploads are stored in Postgres until they are processed.
 
 Sources: [Render free](https://render.com/docs/free), [Render instance types](https://render.com/docs/compute-plans),
-[Neon pricing](https://neon.com/pricing), [Vercel Hobby](https://vercel.com/docs/plans/hobby).
-Re-check these pages before relying on the limits; they change.
+[Render Blueprint spec](https://render.com/docs/blueprint-spec), [Neon pricing](https://neon.com/pricing).
+These limits change, so re-check the pages before relying on them.
 
-## Step 1 — Rotate the API keys
+## Step 1: Rotate the API keys
 
-The Groq, NVIDIA, Gemini, and OpenRouter keys used during development were pasted into a
-chat. Create new keys in the [Groq console](https://console.groq.com/keys), on
-[build.nvidia.com](https://build.nvidia.com), in [Google AI Studio](https://aistudio.google.com/apikey)
-and on [OpenRouter](https://openrouter.ai/settings/keys), delete the old ones, and use only the
-new ones below. Update `backend/.env` locally too.
+The Groq, NVIDIA, Gemini, and OpenRouter keys used during development were pasted into a chat.
+1. Create new keys in the [Groq console](https://console.groq.com/keys), on
+   [build.nvidia.com](https://build.nvidia.com), in [Google AI Studio](https://aistudio.google.com/apikey)
+   and on [OpenRouter](https://openrouter.ai/settings/keys).
+2. Delete the old keys.
+3. Use only the new ones in the steps below, and put them in `backend/.env` locally as well.
+4. On OpenRouter, consider setting a credit limit of 0 on the key. The app already only allows
+   `:free` models; the limit adds a second guard.
 
-## Step 2 — Push to GitHub
+## Step 2: Create the Neon database
 
-```bash
-cd "C:\Multi-Source Agentic RAG Platform"
-git add -A && git commit -m "Atlas AI"
-git branch -M main
-git remote add origin https://github.com/<you>/atlas-ai.git
-git push -u origin main
-```
-
-`backend/.env` is gitignored. Run `git status` and confirm no `.env` file is staged before
-pushing. CI (`.github/workflows/ci.yml`) runs on the push without any secrets.
-
-## Step 3 — Neon database
-
-1. At [neon.com](https://neon.com), create a project (Postgres 17, a region near your Render
-   region).
-2. Copy the **direct** connection string, not the `-pooler` one. PgBouncer in transaction mode
-   breaks psycopg's automatic prepared statements and LangGraph's `CREATE INDEX CONCURRENTLY`.
-3. Turn it into a SQLAlchemy URL by changing the scheme:
-   `postgresql+psycopg://USER:PASSWORD@ep-xxx.REGION.aws.neon.tech/neondb?sslmode=require`
-4. Nothing else is needed. The first backend start runs `CREATE EXTENSION vector` and all
-   migrations.
-
-## Step 4 — Render backend
-
-1. In the Render dashboard choose **New → Blueprint**, select the repo, and Render reads
-   `render.yaml` (Docker, free plan, health check `/health/live`, `JWT_SECRET` auto-generated).
-2. Fill in the `sync: false` variables:
-   - `DATABASE_URL`: the Neon URL from step 3
-   - `GROQ_API_KEY`, `NVIDIA_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`: the new keys
-   - `CORS_ORIGINS`: `["https://<your-app>.vercel.app"]` (fill in after step 5; JSON list syntax)
-   - `DEMO_SEED_PASSWORD`: optional. If set, each boot (idempotently) creates the
-     `demo@atlas.example` account with the sample handbook, so visitors can sign in. Use a
-     throwaway password of at least 10 characters.
-3. Deploy. On boot the entrypoint runs `python -m app.cli migrate` (because
-   `RUN_MIGRATIONS_ON_START=true`), optionally seeds the demo, then starts uvicorn on `$PORT`.
-4. Verify:
-   ```bash
-   curl https://<service>.onrender.com/health/live
-   curl https://<service>.onrender.com/health/ready   # database, pgvector, migrations, checkpointer = ok
+1. Sign in at [neon.com](https://neon.com) and create a project: Postgres 17, region **US East
+   (Ohio)** or the region closest to the Render region you pick.
+2. Open **Connect** and choose the **direct** connection, with "Connection pooling" switched
+   **off**. The pooled `-pooler` host breaks psycopg's prepared statements and LangGraph's
+   `CREATE INDEX CONCURRENTLY`.
+3. Copy the URL and change only the scheme, from `postgresql://` to `postgresql+psycopg://`:
    ```
+   postgresql+psycopg://neondb_owner:PASSWORD@ep-xxxx.us-east-2.aws.neon.tech/neondb?sslmode=require
+   ```
+   If Neon appends `&channel_binding=require`, keep it.
 
-### Migration strategy
+Nothing else is needed. The backend's first start creates the `vector` extension and runs every
+migration.
 
-- **Forward-only:** migrations are reviewed in pull requests and must not drop user data;
-  `0002` rebuilds a *generated* column, which is recomputed from stored text.
-- **Applied at boot** via an explicit flag, because no separate release step is assumed on the
-  free tier. If a migration fails, the container exits before serving traffic and Render keeps
-  the previous deploy live.
-- **Destructive changes** (dropping or rewriting columns that hold data) must not ship this way.
-  Run them manually against a Neon branch first, then promote. Neon branching is available on the
-  free tier.
-- **To run migrations manually instead:** set `RUN_MIGRATIONS_ON_START=false` and run
-  `DATABASE_URL=... uv run python -m app.cli migrate` from your machine.
+## Step 3: Deploy the blueprint on Render
 
-## Step 5 — Vercel frontend
+1. Sign in at [render.com](https://render.com) with GitHub, and allow access to the
+   `Multi-Source-Agentic-RAG-Platform` repository.
+2. Choose **New → Blueprint**, select the repo and branch `main`. Render reads `render.yaml` and
+   shows two services, `atlas-ai-backend` (Docker, free) and `atlas-ai-frontend` (static site).
+3. Render asks for the variables marked `sync: false`. Fill them in:
 
-1. In Vercel choose **New Project**, import the repo, and set the **Root Directory** to
-   `frontend`. The framework preset is Vite; `frontend/vercel.json` adds the SPA rewrite.
-2. Add the environment variable `VITE_API_BASE_URL=https://<service>.onrender.com`.
-3. Deploy, then put the Vercel URL into Render's `CORS_ORIGINS` and redeploy the backend.
+   | Variable | Value |
+   |---|---|
+   | `DATABASE_URL` | the Neon URL from Step 2 |
+   | `GROQ_API_KEY`, `NVIDIA_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY` | the new keys |
+   | `DEMO_SEED_PASSWORD` | a throwaway password of at least 10 characters for the public demo account `demo@atlas.example` |
+   | `CORS_ORIGINS` | `["https://atlas-ai-frontend.onrender.com"]` for now (you correct it in Step 4) |
+   | `VITE_API_BASE_URL` (frontend) | `https://atlas-ai-backend.onrender.com` for now (you correct it in Step 4) |
 
-## Step 6 — Public smoke test
+   `JWT_SECRET` is generated automatically, and everything else comes from `render.yaml`.
+4. Click **Apply**. On its first boot the backend:
+   - runs migrations;
+   - seeds the demo workspace, ingesting the 11 handbook documents through NVIDIA embeddings;
+   - starts the API.
+
+   The first deploy takes several minutes, mostly the Docker build. Follow it under
+   **atlas-ai-backend → Logs**; look for `migrations_complete`, then `demo_seeded`, then
+   `Application startup complete`.
+
+## Step 4: Fix the two URLs
+
+Render gives each service a URL like `https://<name>.onrender.com`. If a name is taken, it adds a
+suffix, for example `atlas-ai-backend-x7k2.onrender.com`.
+
+1. Copy the real backend URL from the **atlas-ai-backend** page.
+2. Open **atlas-ai-frontend → Environment**, set `VITE_API_BASE_URL` to that URL (no trailing
+   slash), save, then click **Manual Deploy → Deploy latest commit**. The value is compiled into
+   the bundle, so the site must be rebuilt.
+3. Copy the real frontend URL from the **atlas-ai-frontend** page.
+4. Open **atlas-ai-backend → Environment**, set `CORS_ORIGINS` to `["https://<your-frontend>.onrender.com"]`
+   (JSON list, exact origin, no trailing slash), and save. The backend redeploys on its own.
+5. Under **atlas-ai-frontend → Redirects/Rewrites**, confirm there is a rewrite `/*` →
+   `/index.html`. If the blueprint didn't create it, add it there. Without it, refreshing a
+   page such as `/chat/...` returns 404.
+
+## Step 5: Check the backend
 
 ```bash
-API=https://<service>.onrender.com
-curl -s $API/health/ready
-TOKEN=$(curl -s -X POST $API/api/v1/auth/login -H 'Content-Type: application/json' \
-  -d '{"email":"demo@atlas.example","password":"<DEMO_SEED_PASSWORD>"}' | python -c "import sys,json;print(json.load(sys.stdin)['access_token'])")
-curl -s -X POST $API/api/v1/chat -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
-  -d '{"message":"What is the hotel limit in London?"}' | python -m json.tool | head -30
+curl https://<backend>.onrender.com/health/live    # {"status":"alive"}
+curl https://<backend>.onrender.com/health/ready   # database, pgvector, migrations, checkpointer all "ok"
 ```
 
-Then, in the UI:
-1. Ask a question and click a citation.
-2. Restart the Render service, reload, and confirm the conversation is still there. This checks
-   persistence across restarts.
-3. Put the verified URL in the README.
+The first request after the service has been idle can take about a minute; that is the free
+tier waking up.
+
+## Step 6: Smoke test the public app
+
+1. Open `https://<frontend>.onrender.com` and sign in as `demo@atlas.example` with your
+   `DEMO_SEED_PASSWORD`.
+2. In **Chat**, ask "What is the hotel limit in London?". You should get 250 EUR with a citation;
+   click it and the evidence panel opens.
+3. Ask "What is the parental leave policy for pets?". It should decline.
+4. Open the run from the answer and check that the node timeline shows the provider that
+   answered.
+5. **Persistence:** on Render, click **atlas-ai-backend → Manual Deploy → Restart service**.
+   Reload the app; the conversation must still be there.
+6. Upload a small Markdown file in **Knowledge sources** and watch it reach Ready.
+7. Put the verified URL into the README under "Live demo".
+
+## Optional: stop strangers from using up your free quota
+
+Visitors can register their own workspaces. That's good for showing multi-tenancy, but each one
+draws on your free LLM quota. To allow only the demo account, set `ALLOW_REGISTRATION=false` on
+the backend and share the demo login instead.
+
+## Migration strategy
+
+- **Forward-only and reviewed:** migrations are reviewed in pull requests and must not drop user
+  data.
+- **Applied at boot:** they run because `RUN_MIGRATIONS_ON_START=true`. If a migration fails,
+  the container exits before serving traffic and Render keeps the previous deploy live.
+- **Destructive changes:** test them on a Neon branch first; branching is available on the free
+  plan.
+- **Running them manually instead:** set `RUN_MIGRATIONS_ON_START=false`, then run
+  `DATABASE_URL=... uv run python -m app.cli migrate` from your machine.
 
 ## Operating notes
 
 - **Cold starts:**
-  - Render: the first request after 15 min idle waits about a minute (the browser shows Render's
-    loading page).
-  - Neon: compute also resumes on first query, adding a few seconds; `/health/ready` may briefly
-    report `database: fail` until it does.
-- **Quotas:**
-  - Groq: free-tier limits are per model (8,000 tokens/minute observed for gpt-oss-120b on this
-    account). Users get a clear "rate limit reached, retry shortly" answer and the run is
-    recorded with `error_category=rate_limited`.
-  - NVIDIA: limits apply to embeddings at ingestion and per query.
-- **Memory:** keep `RERANKER_PROVIDER=none` on the 512 MB instance. The local cross-encoder
-  needs more RAM and CPU than the free tier offers.
-- **Single instance:** ingestion recovery and the rate limiter assume one backend instance,
-  which is what the free tier runs.
-- **Provider chain:** `LLM_FALLBACK_CHAIN` (set in `render.yaml`) tries Groq gpt-oss-120b,
-  Groq gpt-oss-20b, Gemini 3.6 Flash, two OpenRouter free models, then NVIDIA. It uses one account
-  per provider; combining several accounts of the same provider to get around its limits is
-  against Groq's usage policy and is not supported.
-- **No paid fallbacks:** OpenRouter models must end in `:free` (enforced at startup), and the
-  other providers are used on their free tiers.
-- **Privacy:** some free models' hosts (OpenRouter free endpoints, Gemini's free tier) may log or
-  train on prompts, which include retrieved document text. That is fine for the fictional demo
-  corpus; remove those entries from the chain before using real company documents.
+  - Render's free backend sleeps after 15 minutes idle, and the first request then takes about a
+    minute.
+  - Neon's compute also resumes on first query, adding a few seconds; `/health/ready` may briefly
+    report `database: fail`.
+- **Quotas:** answers go through `LLM_FALLBACK_CHAIN` (Groq gpt-oss-120b → Groq gpt-oss-20b →
+  Gemini 3.6 Flash → two OpenRouter `:free` models → NVIDIA), one account per provider. If every
+  member is exhausted, users get a clear "rate limit reached, retry shortly" message, and the run
+  records each skipped provider in `provider_failovers`.
+- **Privacy:** some free endpoints (OpenRouter free models, Gemini's free tier) may log or train
+  on prompts, and prompts include retrieved document text. That is fine for the fictional demo
+  corpus. Remove those entries before using real company documents.
+- **Memory:** keep `RERANKER_PROVIDER=none` on the 512 MB instance.
+- **Single instance:** the rate limiter, the per-conversation lock, and job recovery are
+  in-process. Before running more than one backend instance, move them to Postgres or Redis.
+- **No paid services:** OpenRouter models must end in `:free` (checked at startup); every other
+  provider runs on its free tier.

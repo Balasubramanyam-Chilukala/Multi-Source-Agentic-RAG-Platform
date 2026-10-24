@@ -223,8 +223,8 @@ erDiagram
 ## 8. Cost and free-tier feasibility
 
 The deployment uses free tiers only (verified limits are in [deployment.md](deployment.md)):
-Neon for Postgres with pgvector, Render free for the Docker backend, and Vercel Hobby for the
-static frontend.
+Neon for Postgres with pgvector, a Render free web service for the Docker backend, and a
+Render static site for the frontend.
 - **LLM and embeddings** run on free API tiers.
 - **Typical cost of one question:** about 700–900 prompt tokens and 50–100 completion tokens, one
   embedding call, and 1–3 LLM calls. Measured over 60 benchmark questions: 42,984 prompt and

@@ -6,7 +6,7 @@ isn't there, it says so. A LangGraph agent decides whether to search, refine the
 tool, ask a clarifying question, or abstain. Every run is traced, and a built-in benchmark
 measures retrieval and answer quality.
 
-> **Live demo:** not deployed yet. The free-tier deployment (Neon, Render, Vercel) is fully
+> **Live demo:** not deployed yet. The free-tier deployment (Render + Neon) is fully
 > prepared; see [docs/deployment.md](docs/deployment.md). A URL will be added here once it has
 > been verified.
 
@@ -142,7 +142,7 @@ Details:
 | Database | PostgreSQL 17 + pgvector 0.8 |
 | Frontend | React 19, TypeScript (strict), Vite, Tailwind 4, TanStack Query, Recharts, react-markdown, Radix primitives |
 | Quality | pytest (unit + integration against real PostgreSQL), Ruff, mypy `--strict`, Vitest + Testing Library, Playwright, ESLint |
-| Delivery | uv lockfile, multi-stage non-root Docker images, Docker Compose, GitHub Actions, Render blueprint, Vercel config |
+| Delivery | uv lockfile, multi-stage non-root Docker images, Docker Compose, GitHub Actions, Render blueprint (backend + static frontend) |
 
 ## Run it locally
 

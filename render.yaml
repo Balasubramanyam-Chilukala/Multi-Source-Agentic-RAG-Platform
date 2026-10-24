@@ -1,4 +1,4 @@
-# Render Blueprint for the Atlas AI backend (free web service, Docker runtime).
+# Render Blueprint for Atlas AI: backend (free Docker web service) + frontend (free static site).
 # The database is an external Neon free-tier PostgreSQL (pgvector included) because Render's
 # free PostgreSQL expires after 30 days. See docs/deployment.md for the full procedure.
 services:
@@ -6,8 +6,9 @@ services:
     name: atlas-ai-backend
     runtime: docker
     plan: free
-    rootDir: backend
-    dockerfilePath: ./Dockerfile
+    # Paths are relative to the repository root (Render Blueprint spec).
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
     healthCheckPath: /health/live
     autoDeploy: true
     envVars:
@@ -57,3 +58,33 @@ services:
         sync: false
       - key: DEMO_SEED_PASSWORD
         sync: false
+
+  # Frontend: free static site. VITE_API_BASE_URL is compiled in at build time, so redeploy
+  # the site after changing it.
+  - type: web
+    name: atlas-ai-frontend
+    runtime: static
+    buildCommand: cd frontend && npm ci && npm run build
+    staticPublishPath: ./frontend/dist
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      # The backend's public URL, e.g. https://atlas-ai-backend.onrender.com (no trailing slash).
+      - key: VITE_API_BASE_URL
+        sync: false
+    routes:
+      # SPA: every client-side route serves index.html.
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
