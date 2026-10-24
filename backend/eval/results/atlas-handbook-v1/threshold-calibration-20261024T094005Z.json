@@ -1,0 +1,342 @@
+{
+  "dataset": "atlas-handbook-v1",
+  "split": "dev",
+  "target_answerable_pass_rate": 0.95,
+  "chosen_min_dense_similarity": 0.32,
+  "dev_answerable_pass_rate": 0.9583,
+  "dev_unanswerable_block_rate": 0.4,
+  "min_lexical_coverage": 0.5,
+  "embedding_model": "nvidia/nvidia/nemotron-3.5-embed-1b@d1024",
+  "curve": [
+    {
+      "threshold": 0.05,
+      "pass": 1.0,
+      "block": 0.0
+    },
+    {
+      "threshold": 0.06,
+      "pass": 1.0,
+      "block": 0.0
+    },
+    {
+      "threshold": 0.07,
+      "pass": 1.0,
+      "block": 0.0
+    },
+    {
+      "threshold": 0.08,
+      "pass": 1.0,
+      "block": 0.0
+    },
+    {
+      "threshold": 0.09,
+      "pass": 1.0,
+      "block": 0.0
+    },
+    {
+      "threshold": 0.1,
+      "pass": 1.0,
+      "block": 0.0
+    },
+    {
+      "threshold": 0.11,
+      "pass": 1.0,
+      "block": 0.2
+    },
+    {
+      "threshold": 0.12,
+      "pass": 1.0,
+      "block": 0.2
+    },
+    {
+      "threshold": 0.13,
+      "pass": 1.0,
+      "block": 0.2
+    },
+    {
+      "threshold": 0.14,
+      "pass": 1.0,
+      "block": 0.2
+    },
+    {
+      "threshold": 0.15,
+      "pass": 1.0,
+      "block": 0.2
+    },
+    {
+      "threshold": 0.16,
+      "pass": 1.0,
+      "block": 0.2
+    },
+    {
+      "threshold": 0.17,
+      "pass": 1.0,
+      "block": 0.2
+    },
+    {
+      "threshold": 0.18,
+      "pass": 1.0,
+      "block": 0.2
+    },
+    {
+      "threshold": 0.19,
+      "pass": 1.0,
+      "block": 0.2
+    },
+    {
+      "threshold": 0.2,
+      "pass": 1.0,
+      "block": 0.2
+    },
+    {
+      "threshold": 0.21,
+      "pass": 1.0,
+      "block": 0.2
+    },
+    {
+      "threshold": 0.22,
+      "pass": 1.0,
+      "block": 0.2
+    },
+    {
+      "threshold": 0.23,
+      "pass": 1.0,
+      "block": 0.2
+    },
+    {
+      "threshold": 0.24,
+      "pass": 1.0,
+      "block": 0.2
+    },
+    {
+      "threshold": 0.25,
+      "pass": 1.0,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.26,
+      "pass": 0.9583,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.27,
+      "pass": 0.9583,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.28,
+      "pass": 0.9583,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.29,
+      "pass": 0.9583,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.3,
+      "pass": 0.9583,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.31,
+      "pass": 0.9583,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.32,
+      "pass": 0.9583,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.33,
+      "pass": 0.9167,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.34,
+      "pass": 0.9167,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.35,
+      "pass": 0.9167,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.36,
+      "pass": 0.9167,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.37,
+      "pass": 0.9167,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.38,
+      "pass": 0.875,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.39,
+      "pass": 0.8333,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.4,
+      "pass": 0.8333,
+      "block": 0.4
+    },
+    {
+      "threshold": 0.41,
+      "pass": 0.8333,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.42,
+      "pass": 0.8333,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.43,
+      "pass": 0.8333,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.44,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.45,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.46,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.47,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.48,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.49,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.5,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.51,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.52,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.53,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.54,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.55,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.56,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.57,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.58,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.59,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.6,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.61,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.62,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.63,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.64,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.65,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.66,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.67,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.68,
+      "pass": 0.7917,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.69,
+      "pass": 0.75,
+      "block": 0.6
+    },
+    {
+      "threshold": 0.7,
+      "pass": 0.75,
+      "block": 0.6
+    }
+  ]
+}

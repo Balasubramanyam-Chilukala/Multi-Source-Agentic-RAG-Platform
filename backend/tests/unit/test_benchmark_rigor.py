@@ -13,8 +13,9 @@ from app.evaluation import dataset as ds
 from app.evaluation.dataset import DatasetError, EvalCase, RelevanceLabel, load_dataset
 from app.evaluation.judge import ClaimToJudge, FaithfulnessJudge, claims_from_answer, parse_verdicts
 from app.evaluation.report import mean_sd, paired_bootstrap
-from app.evaluation.runner import answer_subset
+from app.evaluation.runner import answer_subset, document_pool, rank_documents
 from app.providers.base import ChatMessage, ChatResult, Usage
+from app.retrieval.types import RetrievalConfig
 
 
 def test_handbook_has_disjoint_stratified_dev_and_test_splits() -> None:
@@ -208,3 +209,15 @@ def test_mean_sd_over_runs() -> None:
     m, sd = mean_sd([0.8, 0.9, 1.0])
     assert m == pytest.approx(0.9) and sd == pytest.approx(0.1)
     assert mean_sd([None, None]) == (None, None)
+
+
+def test_document_level_ranking_collapses_chunks_to_their_best_position() -> None:
+    chunk_document = {"c1": "A", "c2": "B", "c3": "A", "c4": "C", "c5": "B"}
+    assert rank_documents(["c3", "c2", "c1", "missing", "c4", "c5"], chunk_document) == [
+        "A",
+        "B",
+        "C",
+    ]
+    pool = document_pool(RetrievalConfig(top_k=10, candidate_k=24))
+    assert pool.top_k == pool.candidate_k == 40
+    assert document_pool(RetrievalConfig(top_k=5, candidate_k=24)).top_k == 24

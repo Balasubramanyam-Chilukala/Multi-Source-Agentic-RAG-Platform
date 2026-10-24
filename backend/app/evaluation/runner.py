@@ -2,6 +2,10 @@
 
 1. ``prepare_corpus`` ingests the dataset into a managed collection of the tenant (reused across
    runs; rebuilt if the embedding model changed) and resolves relevance labels to chunk ids.
+   When every label names a whole document (BEIR), retrieval is scored at document level: chunks
+   are mapped to their document, the ranking is de-duplicated (a document ranks at its best
+   chunk) and the top k *documents* are compared with the qrels, as in the BEIR protocol.
+   Passage-level labels (the handbook) are scored per chunk.
    ``files`` datasets go through the normal ingestion pipeline; large ``beir`` corpora use a
    bulk path that batches embeddings across documents.
 2. ``execute`` runs the requested split (``test`` by default; ``dev`` is for tuning) once per
@@ -18,7 +22,7 @@ import time
 import uuid
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from typing import Any
 
@@ -95,6 +99,33 @@ class Corpus:
     collection_id: uuid.UUID
     relevant: dict[str, set[str]]
     embedding_model: str
+    # Set when every label is a whole document: scoring then happens over de-duplicated documents.
+    relevant_docs: dict[str, set[str]] | None = None
+    chunk_document: dict[str, str] = field(default_factory=dict)
+
+    @property
+    def unit(self) -> str:
+        return "document" if self.relevant_docs is not None else "chunk"
+
+
+DOCUMENT_POOL_FACTOR = 4
+
+
+def document_pool(config: RetrievalConfig) -> RetrievalConfig:
+    """Document-level scoring needs enough chunks to fill k distinct documents (abstracts are
+    split into ~2 chunks), so every mode ranks a pool of 4 x k chunks before de-duplication."""
+    pool = max(config.candidate_k, DOCUMENT_POOL_FACTOR * config.top_k)
+    return replace(config, top_k=pool, candidate_k=pool)
+
+
+def rank_documents(chunk_ids: list[str], chunk_document: dict[str, str]) -> list[str]:
+    """Collapse a chunk ranking into a document ranking (each document at its best chunk)."""
+    seen: dict[str, None] = {}
+    for chunk_id in chunk_ids:
+        document = chunk_document.get(chunk_id)
+        if document is not None:
+            seen.setdefault(document, None)
+    return list(seen)
 
 
 def answer_subset(cases: list[EvalCase], size: int | None, seed: int) -> set[str]:
@@ -180,12 +211,18 @@ class EvaluationRunner:
                 )
             )
             chunks_by_doc: dict[uuid.UUID, list[tuple[str, str]]] = {}
+            chunk_document: dict[str, str] = {}
             for cid, did, text in rows:
                 chunks_by_doc.setdefault(did, []).append((str(cid), normalize_answer(text)))
+                chunk_document[str(cid)] = str(did)
             model = await self._current_model(session)
 
         relevant: dict[str, set[str]] = {}
+        relevant_docs: dict[str, set[str]] = {}
         for case in dataset.cases:
+            relevant_docs[case.id] = {
+                str(doc_key[label.doc]) for label in case.relevant if label.doc in doc_key
+            }
             ids: set[str] = set()
             for label in case.relevant:
                 document_id = doc_key.get(label.doc)
@@ -200,7 +237,12 @@ class EvaluationRunner:
                 ids |= matched
             relevant[case.id] = ids
         name = f"{model.provider}/{model.model}@{model.version}" if model else "unknown"
-        return Corpus(collection_id, relevant, name)
+        whole_documents = all(
+            label.contains is None for case in dataset.cases for label in case.relevant
+        )
+        if not whole_documents:
+            return Corpus(collection_id, relevant, name)
+        return Corpus(collection_id, relevant, name, relevant_docs, chunk_document)
 
     async def _prepare_files(
         self, tenant_id: uuid.UUID, collection_id: uuid.UUID, dataset: Dataset
@@ -371,6 +413,12 @@ class EvaluationRunner:
         return {
             "split": options.split,
             "runs": options.runs,
+            "unit": corpus.unit if corpus else None,
+            "document_pool": (
+                document_pool(RetrievalConfig(top_k=options.top_k)).top_k
+                if corpus and corpus.unit == "document"
+                else None
+            ),
             "top_k": options.top_k,
             "candidate_k": max(self.settings.retrieval_candidate_k, options.top_k),
             "rrf_k": self.settings.rrf_k,
@@ -584,14 +632,20 @@ class EvaluationRunner:
                     tenant_id=tenant_id,
                     collection_ids=[corpus.collection_id],
                     query=case.question,
-                    config=config,
+                    config=document_pool(config) if corpus.relevant_docs is not None else config,
                     query_vector=query_vector,
                 )
             result["retrieval_latency_ms"] = round((time.perf_counter() - started) * 1000, 2)
             retrieved = [str(c.chunk_id) for c in retrieval.chunks]
+            if corpus.relevant_docs is not None:
+                documents = rank_documents(retrieved, corpus.chunk_document)
+                scored = retrieval_metrics(documents, corpus.relevant_docs[case.id], config.top_k)
+                retrieved = retrieved[: config.top_k]
+            else:
+                scored = retrieval_metrics(retrieved, relevant, config.top_k)
             result["retrieved"] = retrieved
             result["retrieval_metrics"] = {
-                **retrieval_metrics(retrieved, relevant, config.top_k),
+                **scored,
                 "sufficient": retrieval.sufficiency.sufficient,
                 "top_dense_similarity": retrieval.sufficiency.top_dense_similarity,
                 "top_lexical_coverage": retrieval.sufficiency.top_lexical_coverage,

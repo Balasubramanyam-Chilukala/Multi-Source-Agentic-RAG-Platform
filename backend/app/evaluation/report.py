@@ -80,12 +80,32 @@ def render_markdown(runs: list[dict[str, Any]], *, title: str) -> str:
     first = runs[0]
     cfg = first["config"]
     repetitions = max(len(v) for v in by_mode.values())
+    deterministic = repetitions > 1 and all(
+        len({tuple(r["metrics"]["retrieval"][k] for k in RETRIEVAL_KEYS) for r in rs}) == 1
+        for rs in by_mode.values()
+    )
+    unit = cfg.get("unit") or "chunk"
     lines = [
         f"# {title}",
         "",
         f"- Dataset: `{first['dataset']}` {first['dataset_version']}, split **{cfg.get('split', 'all')}**: "
         f"{first['metrics']['case_count']} cases ({first['metrics']['labelled_case_count']} with relevance labels)",
         f"- Repetitions per mode: **{repetitions}** (cells show mean ± sd when > 1; query embeddings are recomputed each run)",
+        *(
+            [
+                "- All repetitions produced identical retrieval metrics (the embedding API and the "
+                "rankers are deterministic), so sd = 0 says nothing about sampling uncertainty; the "
+                "paired bootstrap CIs over queries below are the meaningful error bars."
+            ]
+            if deterministic
+            else []
+        ),
+        f"- Scoring unit: **{unit}**"
+        + (
+            f" (a pool of {cfg.get('document_pool')} chunks collapsed to their documents; top k distinct documents vs. qrels, as in BEIR)"
+            if unit == "document"
+            else " (labels name the passage that contains the answer)"
+        ),
         f"- k = {cfg['top_k']}, candidate pool = {cfg['candidate_k']}, RRF k = {cfg['rrf_k']}",
         f"- Embedding model: `{cfg['embedding_model']}`; chunk size {cfg['chunk_size']} / overlap {cfg['chunk_overlap']}",
         f"- Generated: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')}",

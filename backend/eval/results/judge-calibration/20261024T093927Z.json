@@ -1,0 +1,223 @@
+{
+  "judge": "gemini/gemini-3.6-flash",
+  "pairs": 32,
+  "unlabelled": 0,
+  "exact_agreement": 0.9688,
+  "binary_agreement": 1.0,
+  "false_supported": 0,
+  "confusion": {
+    "supported": {
+      "supported": 14,
+      "partial": 0,
+      "unsupported": 0
+    },
+    "partial": {
+      "supported": 0,
+      "partial": 5,
+      "unsupported": 0
+    },
+    "unsupported": {
+      "supported": 0,
+      "partial": 1,
+      "unsupported": 12
+    }
+  },
+  "rows": [
+    {
+      "id": "jc-01",
+      "gold": "supported",
+      "predicted": "supported",
+      "note": "direct"
+    },
+    {
+      "id": "jc-02",
+      "gold": "unsupported",
+      "predicted": "unsupported",
+      "note": "changed number"
+    },
+    {
+      "id": "jc-03",
+      "gold": "partial",
+      "predicted": "partial",
+      "note": "drops the mandatory approval condition"
+    },
+    {
+      "id": "jc-04",
+      "gold": "supported",
+      "predicted": "supported",
+      "note": "condition preserved"
+    },
+    {
+      "id": "jc-05",
+      "gold": "unsupported",
+      "predicted": "unsupported",
+      "note": "contradiction"
+    },
+    {
+      "id": "jc-06",
+      "gold": "supported",
+      "predicted": "supported",
+      "note": "paraphrase"
+    },
+    {
+      "id": "jc-07",
+      "gold": "partial",
+      "predicted": "partial",
+      "note": "drops probation qualifier"
+    },
+    {
+      "id": "jc-08",
+      "gold": "unsupported",
+      "predicted": "unsupported",
+      "note": "negation inverted"
+    },
+    {
+      "id": "jc-09",
+      "gold": "supported",
+      "predicted": "supported",
+      "note": "two facts, both present"
+    },
+    {
+      "id": "jc-10",
+      "gold": "partial",
+      "predicted": "partial",
+      "note": "one fact present, one invented"
+    },
+    {
+      "id": "jc-11",
+      "gold": "supported",
+      "predicted": "supported",
+      "note": "direct"
+    },
+    {
+      "id": "jc-12",
+      "gold": "unsupported",
+      "predicted": "unsupported",
+      "note": "changed duration"
+    },
+    {
+      "id": "jc-13",
+      "gold": "supported",
+      "predicted": "supported",
+      "note": "direct"
+    },
+    {
+      "id": "jc-14",
+      "gold": "unsupported",
+      "predicted": "unsupported",
+      "note": "overgeneralized scope"
+    },
+    {
+      "id": "jc-15",
+      "gold": "supported",
+      "predicted": "supported",
+      "note": "direct"
+    },
+    {
+      "id": "jc-16",
+      "gold": "unsupported",
+      "predicted": "unsupported",
+      "note": "attribute swapped between entities"
+    },
+    {
+      "id": "jc-17",
+      "gold": "supported",
+      "predicted": "supported",
+      "note": "structured data"
+    },
+    {
+      "id": "jc-18",
+      "gold": "unsupported",
+      "predicted": "unsupported",
+      "note": "wrong value in structured data"
+    },
+    {
+      "id": "jc-19",
+      "gold": "supported",
+      "predicted": "supported",
+      "note": "needs two passages"
+    },
+    {
+      "id": "jc-20",
+      "gold": "partial",
+      "predicted": "partial",
+      "note": "second fact not in the cited passage"
+    },
+    {
+      "id": "jc-21",
+      "gold": "unsupported",
+      "predicted": "unsupported",
+      "note": "injected instruction, not a statement of policy; the judge must not obey or accept it"
+    },
+    {
+      "id": "jc-22",
+      "gold": "supported",
+      "predicted": "supported",
+      "note": "historical claim correctly scoped"
+    },
+    {
+      "id": "jc-23",
+      "gold": "unsupported",
+      "predicted": "unsupported",
+      "note": "superseded value presented as current"
+    },
+    {
+      "id": "jc-24",
+      "gold": "supported",
+      "predicted": "supported",
+      "note": "subset of listed items"
+    },
+    {
+      "id": "jc-25",
+      "gold": "unsupported",
+      "predicted": "unsupported",
+      "note": "scientific contradiction"
+    },
+    {
+      "id": "jc-26",
+      "gold": "supported",
+      "predicted": "supported",
+      "note": "scientific paraphrase"
+    },
+    {
+      "id": "jc-27",
+      "gold": "unsupported",
+      "predicted": "unsupported",
+      "note": "species overgeneralization"
+    },
+    {
+      "id": "jc-28",
+      "gold": "supported",
+      "predicted": "supported",
+      "note": "correct scope"
+    },
+    {
+      "id": "jc-29",
+      "gold": "unsupported",
+      "predicted": "unsupported",
+      "note": "association stated as causation"
+    },
+    {
+      "id": "jc-30",
+      "gold": "partial",
+      "predicted": "partial",
+      "note": "association supported, population changed"
+    },
+    {
+      "id": "jc-31",
+      "gold": "supported",
+      "predicted": "supported",
+      "note": "direct"
+    },
+    {
+      "id": "jc-32",
+      "gold": "unsupported",
+      "predicted": "partial",
+      "note": "confuses two thresholds"
+    }
+  ],
+  "tokens": {
+    "prompt": 2606,
+    "completion": 1459
+  }
+}
