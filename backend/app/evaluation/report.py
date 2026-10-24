@@ -73,7 +73,9 @@ def _per_case(run: dict[str, Any], key: str) -> dict[str, float]:
     }
 
 
-def render_markdown(runs: list[dict[str, Any]], *, title: str) -> str:
+def render_markdown(
+    runs: list[dict[str, Any]], *, title: str, failed_runs: list[str] | None = None
+) -> str:
     by_mode: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for run in runs:
         by_mode[run["mode"]].append(run)
@@ -109,6 +111,14 @@ def render_markdown(runs: list[dict[str, Any]], *, title: str) -> str:
         f"- k = {cfg['top_k']}, candidate pool = {cfg['candidate_k']}, RRF k = {cfg['rrf_k']}",
         f"- Embedding model: `{cfg['embedding_model']}`; chunk size {cfg['chunk_size']} / overlap {cfg['chunk_overlap']}",
         f"- Generated: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')}",
+        *(
+            [
+                f"- **Incomplete: {len(failed_runs)} run(s) failed and are excluded:** "
+                + "; ".join(f"`{f[:160]}`" for f in failed_runs)
+            ]
+            if failed_runs
+            else []
+        ),
         "",
         "## Retrieval (same queries, labels and k for every mode)",
         "",
@@ -248,13 +258,26 @@ def render_markdown(runs: list[dict[str, Any]], *, title: str) -> str:
     return "\n".join(lines)
 
 
-def write_results(runs: list[dict[str, Any]], out_dir: Path, *, title: str) -> Path:
+def write_results(
+    runs: list[dict[str, Any]],
+    out_dir: Path,
+    *,
+    title: str,
+    failed_runs: list[str] | None = None,
+) -> Path:
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     target = out_dir / runs[0]["dataset"]
     target.mkdir(parents=True, exist_ok=True)
     (target / f"{stamp}.json").write_text(
-        json.dumps({"generated_at": stamp, "runs": runs}, indent=2, default=str), encoding="utf-8"
+        json.dumps(
+            {"generated_at": stamp, "runs": runs, "failed_runs": failed_runs or []},
+            indent=2,
+            default=str,
+        ),
+        encoding="utf-8",
     )
     report_path: Path = target / f"{stamp}.md"
-    report_path.write_text(render_markdown(runs, title=title), encoding="utf-8")
+    report_path.write_text(
+        render_markdown(runs, title=title, failed_runs=failed_runs), encoding="utf-8"
+    )
     return report_path

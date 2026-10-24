@@ -12,7 +12,7 @@ import pytest
 from app.evaluation import dataset as ds
 from app.evaluation.dataset import DatasetError, EvalCase, RelevanceLabel, load_dataset
 from app.evaluation.judge import ClaimToJudge, FaithfulnessJudge, claims_from_answer, parse_verdicts
-from app.evaluation.report import mean_sd, paired_bootstrap
+from app.evaluation.report import RETRIEVAL_KEYS, mean_sd, paired_bootstrap, render_markdown
 from app.evaluation.runner import aggregate, answer_subset, document_pool, rank_documents
 from app.providers.base import ChatMessage, ChatResult, Usage
 from app.retrieval.types import RetrievalConfig
@@ -258,3 +258,33 @@ def test_judge_outage_is_reported_as_coverage_not_as_answer_error() -> None:
         "judged_cases": 1,
         "failed_cases": 1,
     }
+
+
+def test_report_marks_failed_runs_as_incomplete() -> None:
+    run = {
+        "mode": "dense",
+        "dataset": "tiny",
+        "dataset_version": "1",
+        "config": {
+            "split": "test",
+            "top_k": 5,
+            "candidate_k": 24,
+            "rrf_k": 60,
+            "embedding_model": "m",
+            "chunk_size": 1000,
+            "chunk_overlap": 150,
+            "reranker": None,
+        },
+        "metrics": {
+            "case_count": 1,
+            "labelled_case_count": 1,
+            "retrieval": dict.fromkeys(RETRIEVAL_KEYS, 1.0),
+            "latency_ms": {"retrieval_p50": 5.0},
+            "by_category": {},
+        },
+        "cases": [],
+    }
+    complete = render_markdown([run], title="t")
+    assert "Incomplete" not in complete and "\n\n\n" not in complete
+    partial = render_markdown([run], title="t", failed_runs=["dense #2: ProviderTimeoutError"])
+    assert "Incomplete: 1 run(s) failed" in partial and "ProviderTimeoutError" in partial

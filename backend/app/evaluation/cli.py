@@ -69,16 +69,20 @@ def _judge_settings(base: Settings, spec: str) -> Settings:
 
 async def _collect(
     database: Database, run_ids: list[Any], dataset_name: str
-) -> list[dict[str, Any]]:
+) -> tuple[list[dict[str, Any]], list[str]]:
+    """Completed runs, plus a description of each run that failed (e.g. a provider outage)."""
     questions = {c.id: c for c in load_dataset(dataset_name).cases}
     collected = []
+    failures: list[str] = []
     async with database.sessionmaker() as session:
         for run_id in run_ids:
             row = await session.get(EvaluationRun, run_id)
             if row is None:
                 continue
             if row.error_message:
-                raise RuntimeError(f"run {row.retrieval_mode.value} failed: {row.error_message}")
+                index = (row.config or {}).get("run_index", 0) + 1
+                failures.append(f"{row.retrieval_mode.value} #{index}: {row.error_message}")
+                continue
             cases = await session.scalars(
                 select(EvaluationCaseResult)
                 .where(EvaluationCaseResult.evaluation_run_id == run_id)
@@ -108,7 +112,15 @@ async def _collect(
                     ],
                 }
             )
-    return collected
+    return collected, failures
+
+
+class PartialResultsError(RuntimeError):
+    """Some runs failed; the report covers the completed ones and lists the failures."""
+
+    def __init__(self, report: Path, failures: list[str]) -> None:
+        super().__init__(f"{len(failures)} run(s) failed")
+        self.report, self.failures = report, failures
 
 
 async def run(
@@ -126,9 +138,14 @@ async def run(
         tenant_id = await _tenant(database)
         run_ids = await runner.create_runs(tenant_id, options)
         await runner.execute(tenant_id, run_ids, options)
-        collected = await _collect(database, run_ids, options.dataset)
+        collected, failures = await _collect(database, run_ids, options.dataset)
+        if not collected:
+            raise RuntimeError("every run failed: " + "; ".join(failures))
         title = f"Atlas AI benchmark — {options.dataset} ({options.split} split)"
-        return write_results(collected, out_dir, title=title)
+        report = write_results(collected, out_dir, title=title, failed_runs=failures)
+        if failures:
+            raise PartialResultsError(report, failures)
+        return report
     finally:
         await providers.aclose()
         if judge_providers:
@@ -229,7 +246,9 @@ async def calibrate_threshold(
         tenant_id = await _tenant(database)
         run_ids = await runner.create_runs(tenant_id, options)
         await runner.execute(tenant_id, run_ids, options)
-        collected = await _collect(database, run_ids, dataset)
+        collected, failures = await _collect(database, run_ids, dataset)
+        if failures:
+            raise RuntimeError("calibration run failed: " + "; ".join(failures))
     finally:
         await providers.aclose()
         await database.dispose()
@@ -401,8 +420,14 @@ def main(argv: list[str] | None = None) -> None:
         case_ids=args.cases.split(",") if args.cases else None,
         pause_between_answers=args.pause,
     )
-    report = asyncio.run(
-        run(settings, options, args.out, args.judge if args.answers else None),
-        loop_factory=loop_factory,
-    )
+    try:
+        report = asyncio.run(
+            run(settings, options, args.out, args.judge if args.answers else None),
+            loop_factory=loop_factory,
+        )
+    except PartialResultsError as partial:
+        print(f"partial report written to {partial.report}")
+        for failure in partial.failures:
+            print(f"  failed run {failure}")
+        raise SystemExit(1) from None
     print(f"report written to {report}")
