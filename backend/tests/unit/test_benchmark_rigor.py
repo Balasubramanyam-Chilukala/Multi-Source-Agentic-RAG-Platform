@@ -138,6 +138,12 @@ def test_judge_parsing_is_strict_and_aligned() -> None:
         "```json\n" + json.dumps({"verdicts": [{"claim": 1, "verdict": "unsupported"}]}) + "\n```",
         1,
     ) == ["unsupported"]
+    # Unwrapped single verdicts and bare lists are accepted; unknown labels still are not.
+    assert parse_verdicts(json.dumps({"claim": 1, "verdict": "supported", "reason": "x"}), 1) == [
+        "supported"
+    ]
+    assert parse_verdicts(json.dumps([{"claim": 2, "verdict": "partial"}]), 2) == [None, "partial"]
+    assert parse_verdicts(json.dumps({"claim": 1, "verdict": "probably"}), 1) == [None]
 
 
 def test_claims_use_full_passage_text_not_snippets() -> None:

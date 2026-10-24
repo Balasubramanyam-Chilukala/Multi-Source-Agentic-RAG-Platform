@@ -17,9 +17,12 @@ from typing import Any
 
 from pydantic import BaseModel, Field, ValidationError
 
+from app.core.logging import get_logger
 from app.providers.base import ChatMessage, ChatProvider
 
 VERDICTS = ("supported", "partial", "unsupported")
+
+logger = get_logger("atlas.evaluation.judge")
 
 JUDGE_SYSTEM = """TASK: judge
 You are a strict fact-checker. For each numbered CLAIM, decide whether the PASSAGES cited for it
@@ -88,7 +91,13 @@ def parse_verdicts(raw: str, count: int) -> list[str | None]:
     if text.startswith("```"):  # tolerate fenced JSON
         text = text.strip("`").split("\n", 1)[-1]
     try:
-        output = _JudgeOutput.model_validate(json.loads(text))
+        data = json.loads(text)
+        # Some models drop the wrapper for a single claim (a bare verdict object) or emit a list.
+        if isinstance(data, dict) and "verdicts" not in data and "verdict" in data:
+            data = {"verdicts": [data]}
+        elif isinstance(data, list):
+            data = {"verdicts": data}
+        output = _JudgeOutput.model_validate(data)
     except (ValueError, ValidationError, TypeError):
         return [None] * count
     verdicts: list[str | None] = [None] * count
@@ -121,7 +130,15 @@ class FaithfulnessJudge:
                 # truncated reply leaves the whole batch unlabelled.
                 max_tokens=1500 + 200 * len(batch),
             )
-            verdicts.extend(parse_verdicts(result.content, len(batch)))
+            parsed = parse_verdicts(result.content, len(batch))
+            if None in parsed:
+                logger.warning(
+                    "judge_unparseable_reply",
+                    judge=self.name,
+                    unlabelled=parsed.count(None),
+                    reply_start=result.content[:300],
+                )
+            verdicts.extend(parsed)
             prompt_tokens += result.usage.prompt_tokens or 0
             completion_tokens += result.usage.completion_tokens or 0
         return JudgeResult(verdicts, self.name, prompt_tokens, completion_tokens)
