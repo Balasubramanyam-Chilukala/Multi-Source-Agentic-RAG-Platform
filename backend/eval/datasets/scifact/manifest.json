@@ -1,0 +1,21 @@
+{
+  "name": "scifact",
+  "version": "beir-1.0",
+  "format": "beir",
+  "description": "SciFact (Wadden et al., 2020) in BEIR format: 5,183 scientific abstracts and expert-written claims with relevance judgements. BEIR's train qrels (809 queries) are used as the dev split for any tuning; the 300 test queries are held out and are the only ones reported.",
+  "source": "https://github.com/allenai/scifact (via BEIR, https://github.com/beir-cellar/beir)",
+  "license": "Abstracts: ODC-By 1.0 (S2ORC). Claims and annotations: CC BY 4.0. Not redistributed in this repository; downloaded on first use.",
+  "archive_url": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/scifact.zip",
+  "archive_prefix": "scifact",
+  "sha256": "536e14446a0ba56ed1398ab1055f39fe852686ecad24a6306c80c490fa8e0165",
+  "category": "scientific_claim",
+  "splits": {
+    "train": "dev",
+    "test": "test"
+  },
+  "case_counts": {
+    "dev": 809,
+    "test": 300
+  },
+  "document_count": 5183
+}

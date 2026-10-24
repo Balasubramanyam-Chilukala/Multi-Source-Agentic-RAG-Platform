@@ -2,7 +2,7 @@
 
 import uuid
 from datetime import datetime
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Query, Request, status
 from pydantic import BaseModel, Field
@@ -19,7 +19,7 @@ from app.api.deps import (
 from app.core.errors import BadRequestError, NotFoundError
 from app.db.models.evaluation import EvaluationCaseResult, EvaluationMode, EvaluationRun
 from app.db.models.knowledge import JobStatus
-from app.evaluation.dataset import DatasetError, available_datasets, load_dataset
+from app.evaluation.dataset import DatasetError, available_datasets, dataset_summary, load_dataset
 from app.evaluation.runner import ALL_MODES, EvalOptions, EvaluationRunner
 from app.schemas.common import ORMModel, Page
 from app.services.common import audit
@@ -34,6 +34,9 @@ class EvaluationRequest(BaseModel):
     )
     include_answers: bool = Field(default=False, description="also run the agent (uses LLM quota)")
     top_k: int = Field(default=5, ge=1, le=20)
+    split: Literal["dev", "test", "all"] = Field(
+        default="test", description="report on test; tune on dev"
+    )
 
 
 class EvaluationRunOut(ORMModel):
@@ -77,11 +80,15 @@ class DatasetSummary(BaseModel):
     categories: dict[str, int]
     document_count: int
     description: str
+    splits: dict[str, int] = Field(default_factory=dict)
+    format: str = "files"
+    license: str = ""
+    source: str = ""
 
 
 @router.get("/datasets", response_model=list[DatasetSummary])
 async def list_datasets(principal: PrincipalDep) -> list[DatasetSummary]:
-    return [DatasetSummary(**load_dataset(name).summary()) for name in available_datasets()]
+    return [DatasetSummary(**dataset_summary(name)) for name in available_datasets()]
 
 
 @router.post(
@@ -105,7 +112,11 @@ async def run_evaluation(
         else [m for m in ALL_MODES if m != "hybrid_rerank" or providers.reranker() is not None]
     )
     options = EvalOptions(
-        dataset=body.dataset, modes=modes, include_answers=body.include_answers, top_k=body.top_k
+        dataset=body.dataset,
+        modes=modes,
+        include_answers=body.include_answers,
+        top_k=body.top_k,
+        split=body.split,
     )
     runner = EvaluationRunner(
         request.app.state.db.sessionmaker, providers, settings, request.app.state.pipeline

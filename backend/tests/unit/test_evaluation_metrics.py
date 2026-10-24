@@ -126,7 +126,7 @@ def test_percentile_nearest_rank() -> None:
 def test_bundled_dataset_is_valid_and_covers_every_category() -> None:
     dataset = load_dataset("atlas-handbook-v1")
     assert 50 <= len(dataset.cases) <= 100
-    assert {c.category for c in dataset.cases} == set(CATEGORIES)
+    assert {c.category for c in dataset.cases} == set(CATEGORIES) - {"scientific_claim"}
     assert sum(1 for c in dataset.cases if not c.answerable) >= 8
     assert len(dataset.documents) >= 10
 

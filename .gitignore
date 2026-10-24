@@ -27,3 +27,6 @@ Thumbs.db
 test-results/
 playwright-report/
 blob-report/
+
+# Downloaded public benchmark corpora (licensed separately; never committed)
+backend/eval/.cache/

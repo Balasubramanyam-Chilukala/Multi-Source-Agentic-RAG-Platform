@@ -19,7 +19,10 @@ async def test_evaluation_run_produces_metrics_for_each_mode(
     async with running_app(settings) as (_, client):
         owner = await register(client)
         datasets = (await client.get("/api/v1/evaluations/datasets", headers=owner.headers)).json()
-        assert datasets[0]["name"] == "atlas-handbook-v1" and datasets[0]["case_count"] == 60
+        handbook = next(d for d in datasets if d["name"] == "atlas-handbook-v1")
+        assert handbook["case_count"] == 60 and handbook["splits"] == {"dev": 29, "test": 31}
+        scifact = next(d for d in datasets if d["name"] == "scifact")
+        assert scifact["splits"] == {"dev": 809, "test": 300}  # listed without downloading
 
         started = await client.post(
             "/api/v1/evaluations/run",
@@ -38,7 +41,7 @@ async def test_evaluation_run_produces_metrics_for_each_mode(
             ).json()
             assert detail["status"] == "succeeded", detail["error_message"]
             metrics = detail["metrics"]
-            assert metrics["case_count"] == 60
+            assert metrics["case_count"] == 31  # the held-out test split only
             for key in ("recall@k", "precision@k", "hit_rate@k", "mrr", "ndcg@k"):
                 assert 0.0 <= metrics["retrieval"][key] <= 1.0
             assert (
@@ -46,7 +49,7 @@ async def test_evaluation_run_produces_metrics_for_each_mode(
             )  # lexical search finds most labelled passages
             assert metrics["latency_ms"]["retrieval_p95"] is not None  # 60 samples ≥ 20
             assert "unanswerable" in metrics["by_category"]
-            assert len(detail["cases"]) == 60
+            assert len(detail["cases"]) == 31
             assert detail["cases"][0]["question"]
         assert detail["config"]["reranker"] == "mock/term-coverage"
 

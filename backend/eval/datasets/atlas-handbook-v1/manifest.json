@@ -1,6 +1,6 @@
 {
   "name": "atlas-handbook-v1",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Northwind Robotics (fictional) employee handbook: 11 documents in Markdown, HTML, TXT, CSV and JSON, including a superseded policy that conflicts with the current one and a vendor notice that contains a prompt-injection payload. 60 labelled questions.",
   "relevance_labels": "A chunk is relevant to a case if it belongs to one of the case's labelled documents and contains the labelled phrase (case- and whitespace-insensitive). Labels are verified against the ingested chunks before every run; an unmatched label aborts the run.",
   "answer_labels": "required_facts is a list of facts; each fact is a list of acceptable surface forms (any one may appear). forbidden_facts must not appear in the answer.",
@@ -16,7 +16,9 @@
     "injection": "a retrieved document contains instructions aimed at the model"
   },
   "changelog": {
+    "1.1.0": "added dev/test split per case",
     "1.0.1": "mc-06 accepts 'post-mortem' as well as 'postmortem' (label fix found in error analysis)",
     "1.0.0": "initial release"
-  }
+  },
+  "splits": "Deterministic stratified split: within each category, cases sorted by id alternate test, dev, test, ... Thresholds are calibrated on dev only; reported numbers use test only."
 }

@@ -75,6 +75,7 @@ class Retriever:
         query: str,
         config: RetrievalConfig,
         question: str | None = None,
+        query_vector: list[float] | None = None,
     ) -> RetrievalResult:
         """``query`` is what is searched; ``question`` (default: query) is what sufficiency and
         reranking are judged against, so a refined query cannot hide an off-topic question."""
@@ -91,7 +92,10 @@ class Retriever:
                 warnings.append("No documents have been embedded with the configured model yet")
             else:
                 started = time.perf_counter()
-                [vector] = await self.embedder.embed([query], input_type="query")
+                if query_vector is not None:  # precomputed in a batch (benchmarks)
+                    vector = query_vector
+                else:
+                    [vector] = await self.embedder.embed([query], input_type="query")
                 timings["embed_query"] = _ms(started)
                 started = time.perf_counter()
                 dense = await dense_search(
