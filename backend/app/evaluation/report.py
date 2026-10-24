@@ -211,6 +211,19 @@ def render_markdown(
                 + ".",
                 "",
             ]
+        errored = [
+            (r["config"].get("run_index", 0) + 1, sum(1 for c in r["cases"] if c.get("error")))
+            for rs in answer_modes.values()
+            for r in rs
+        ]
+        if any(count for _, count in errored):
+            coverage_lines += [
+                "**Provider errors** (counted as incorrect answers, so a run hit by an outage or an "
+                "exhausted free quota scores low): "
+                + ", ".join(f"run {i}: {count}/{len(runs[0]['cases'])}" for i, count in errored)
+                + ".",
+                "",
+            ]
         for mode, mode_runs in answer_modes.items():
             generator = f"`{mode_runs[0]['config']['provider']}/{mode_runs[0]['config']['model']}`"
             answered = mode_runs[0]["metrics"].get(

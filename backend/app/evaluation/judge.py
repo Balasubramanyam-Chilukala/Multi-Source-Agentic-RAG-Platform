@@ -146,7 +146,9 @@ class FaithfulnessJudge:
 
 def claims_from_answer(state: dict[str, Any]) -> list[ClaimToJudge]:
     """Cited sentences of an agent answer, each paired with the *full* text of its cited passages
-    (citation snippets are truncated, so the evidence list is used instead)."""
+    (citation snippets are truncated, so the evidence list is used instead). Each passage is
+    framed with its document title and section, as the generator saw it: a title such as
+    "Travel Policy (2022)" is often the only place a passage says which policy it belongs to."""
     text_by_marker: dict[str, str] = {}
     evidence = state.get("evidence", [])
     for citation in state.get("citations", []):
@@ -154,7 +156,14 @@ def claims_from_answer(state: dict[str, Any]) -> list[ClaimToJudge]:
             (e for e in evidence if str(e.get("chunk_id")) == citation.get("chunk_id")), None
         )
         if match is not None:
-            text_by_marker[citation["marker"]] = str(match.get("text", ""))
+            header = (
+                [f"Document: {citation['document_title']}"]
+                if citation.get("document_title")
+                else []
+            )
+            if citation.get("section"):
+                header.append(f"Section: {citation['section']}")
+            text_by_marker[citation["marker"]] = "\n".join([*header, str(match.get("text", ""))])
     claims = []
     for claim in state.get("claims", []):
         passages = [text_by_marker[m] for m in claim.get("markers", []) if m in text_by_marker]

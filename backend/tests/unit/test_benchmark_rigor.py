@@ -149,7 +149,15 @@ def test_judge_parsing_is_strict_and_aligned() -> None:
 def test_claims_use_full_passage_text_not_snippets() -> None:
     full = "Hotel stays are reimbursed up to 180 EUR. The cap is 250 EUR per night in London. " * 5
     state = {
-        "citations": [{"marker": "S1", "chunk_id": "c1", "snippet": full[:40]}],
+        "citations": [
+            {
+                "marker": "S1",
+                "chunk_id": "c1",
+                "snippet": full[:40],
+                "document_title": "Travel Policy (2025)",
+                "section": "Hotels",
+            }
+        ],
         "evidence": [{"chunk_id": "c1", "text": full}],
         "claims": [
             {"text": "London is 250 EUR.", "supported": True, "markers": ["S1"]},
@@ -157,7 +165,8 @@ def test_claims_use_full_passage_text_not_snippets() -> None:
         ],
     }
     [claim] = claims_from_answer(state)  # uncited sentences are not judged
-    assert claim.passages == [full]
+    # The judge sees what the generator saw: title and section frame the full passage text.
+    assert claim.passages == [f"Document: Travel Policy (2025)\nSection: Hotels\n{full}"]
 
 
 class _ScriptedJudgeModel:
