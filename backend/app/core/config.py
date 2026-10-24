@@ -130,10 +130,11 @@ class Settings(BaseSettings):
     retrieval_candidate_k: int = Field(default=24, ge=1, le=200)
     rrf_k: int = Field(default=60, ge=1, le=1000)
     # Evidence-sufficiency heuristics; see docs/retrieval-and-evaluation.md for calibration.
-    # 0.25 is calibrated for nvidia/nemotron-3.5-embed-1b@1024 on atlas-handbook-v1: it lets
-    # through every answerable question and pre-filters clearly off-topic ones. Similarity scales
-    # differ per embedding model, so re-calibrate when the model changes.
-    min_dense_similarity: float = Field(default=0.25, ge=-1, le=1)
+    # 0.32 is calibrated for nvidia/nemotron-3.5-embed-1b@1024 on the atlas-handbook-v1 *dev*
+    # split only (`evaluate --calibrate-threshold`): the largest value that still passes >= 95% of
+    # answerable dev questions. Similarity scales differ per embedding model, so re-calibrate when
+    # the model changes.
+    min_dense_similarity: float = Field(default=0.32, ge=-1, le=1)
     min_lexical_coverage: float = Field(default=0.5, ge=0, le=1)
     min_rerank_score: float = -4.0
 

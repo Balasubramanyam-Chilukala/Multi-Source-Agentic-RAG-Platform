@@ -9,7 +9,7 @@ measured top-1 similarities for answerable and unanswerable questions overlap
 
 ## Decision
 Two stages:
-1. A lenient retrieval gate (`MIN_DENSE_SIMILARITY=0.25` or query-term coverage ≥ 0.5) that only
+1. A lenient retrieval gate (`MIN_DENSE_SIMILARITY=0.32` or query-term coverage ≥ 0.5) that only
    filters clearly off-topic questions and triggers one query refinement.
 2. The model must reply `INSUFFICIENT_EVIDENCE` when sources lack the answer, and citation
    validation rejects answers without valid citations (one regeneration, then abstention).

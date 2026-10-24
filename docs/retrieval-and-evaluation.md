@@ -69,7 +69,7 @@ ranks only, so it needs no score calibration.
 | unanswerable (11) | 0.101 | 0.162 | 0.264 | 0.409 |
 
 The distributions overlap, so **no retrieval threshold can separate answerable from
-unanswerable questions**. `MIN_DENSE_SIMILARITY=0.25` is therefore a cheap pre-filter for clearly
+unanswerable questions**. `MIN_DENSE_SIMILARITY=0.32` is therefore a cheap pre-filter for clearly
 off-topic questions (on this data it blocks 3 of 11 unanswerable questions before any LLM call
 and passes every answerable one). The primary abstention decision is the model's
 `INSUFFICIENT_EVIDENCE` sentinel plus citation validation.
