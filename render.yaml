@@ -6,6 +6,8 @@ services:
     name: atlas-ai-backend
     runtime: docker
     plan: free
+    # Same region as the Neon database (AWS us-east-1): the agent runs several queries per answer.
+    region: virginia
     # Paths are relative to the repository root (Render Blueprint spec).
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
