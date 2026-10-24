@@ -106,6 +106,13 @@ async def run_evaluation(
     principal: AdminDep,
     background: BackgroundTasks,
 ) -> StartedEvaluation:
+    if body.dataset in available_datasets() and dataset_summary(body.dataset)["format"] == "beir":
+        # Downloading and embedding thousands of documents is a CLI job, not a web request on a
+        # small instance with free-tier embedding quotas.
+        raise BadRequestError(
+            f"{body.dataset} is a large public corpus; run it with "
+            f"'python -m app.cli evaluate --dataset {body.dataset}'"
+        )
     modes = (
         [m.value for m in body.modes]
         if body.modes

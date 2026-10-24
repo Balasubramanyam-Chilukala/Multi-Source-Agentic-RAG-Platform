@@ -69,6 +69,11 @@ async def test_evaluation_validation(api_settings: Callable[..., Settings]) -> N
                 "/api/v1/evaluations/run", json={"dataset": "nope"}, headers=owner.headers
             )
         ).status_code == 400
+        # Large public corpora are CLI-only (no download/ingest from a web request).
+        refused = await client.post(
+            "/api/v1/evaluations/run", json={"dataset": "scifact"}, headers=owner.headers
+        )
+        assert refused.status_code == 400 and "app.cli evaluate" in refused.text
         # No reranker configured in these settings.
         assert (
             await client.post(
