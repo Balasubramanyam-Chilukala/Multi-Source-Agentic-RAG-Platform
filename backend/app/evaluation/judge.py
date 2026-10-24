@@ -117,7 +117,9 @@ class FaithfulnessJudge:
                 [ChatMessage("system", JUDGE_SYSTEM), ChatMessage("user", build_prompt(batch))],
                 json_mode=True,
                 temperature=0,
-                max_tokens=200 + 60 * len(batch),
+                # Generous: reasoning models spend part of the budget before the JSON, and a
+                # truncated reply leaves the whole batch unlabelled.
+                max_tokens=1500 + 200 * len(batch),
             )
             verdicts.extend(parse_verdicts(result.content, len(batch)))
             prompt_tokens += result.usage.prompt_tokens or 0

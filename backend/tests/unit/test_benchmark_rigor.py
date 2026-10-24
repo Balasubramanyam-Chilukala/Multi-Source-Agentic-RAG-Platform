@@ -13,7 +13,7 @@ from app.evaluation import dataset as ds
 from app.evaluation.dataset import DatasetError, EvalCase, RelevanceLabel, load_dataset
 from app.evaluation.judge import ClaimToJudge, FaithfulnessJudge, claims_from_answer, parse_verdicts
 from app.evaluation.report import mean_sd, paired_bootstrap
-from app.evaluation.runner import answer_subset, document_pool, rank_documents
+from app.evaluation.runner import aggregate, answer_subset, document_pool, rank_documents
 from app.providers.base import ChatMessage, ChatResult, Usage
 from app.retrieval.types import RetrievalConfig
 
@@ -221,3 +221,34 @@ def test_document_level_ranking_collapses_chunks_to_their_best_position() -> Non
     pool = document_pool(RetrievalConfig(top_k=10, candidate_k=24))
     assert pool.top_k == pool.candidate_k == 40
     assert document_pool(RetrievalConfig(top_k=5, candidate_k=24)).top_k == 24
+
+
+def test_judge_outage_is_reported_as_coverage_not_as_answer_error() -> None:
+    cases = [
+        EvalCase(f"c{i}", "single_doc", "q", (RelevanceLabel("d"),), True, (), (), "")
+        for i in range(2)
+    ]
+
+    def result(case_id: str, extra: dict[str, object]) -> dict[str, object]:
+        return {
+            "case_id": case_id,
+            "retrieval_metrics": {"recall@k": 1.0},
+            "answer_metrics": {"correctness": 1.0, "judge_eligible": True, **extra},
+            "latency_ms": 10.0,
+            "retrieval_latency_ms": 5.0,
+            "error": None,
+        }
+
+    results = [
+        result("c0", {"judged_claims": 2, "faithfulness_judged": 1.0}),
+        result("c1", {"judge_error": "ProviderQuotaExceededError"}),
+    ]
+    metrics = aggregate(results, cases, True, judge="nvidia/judge")
+    assert metrics["error_rate"] == 0.0
+    assert metrics["answer"]["correctness"] == 1.0
+    assert metrics["answer"]["faithfulness_judged"] == 1.0
+    assert metrics["answer"]["judge_coverage"] == {
+        "eligible_cases": 2,
+        "judged_cases": 1,
+        "failed_cases": 1,
+    }

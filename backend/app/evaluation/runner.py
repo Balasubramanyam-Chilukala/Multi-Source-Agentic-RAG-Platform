@@ -680,9 +680,19 @@ class EvaluationRunner:
                 if self.judge is not None and state.get("outcome") == "answered":
                     claims = claims_from_answer(state)
                     if claims:
-                        judged = await self.judge.judge(claims)
-                        result["answer_metrics"].update(judged.scores())
-                        result["answer_metrics"]["judge_verdicts"] = judged.verdicts
+                        result["answer_metrics"]["judge_eligible"] = True
+                        try:
+                            judged = await self.judge.judge(claims)
+                        except Exception as exc:
+                            # A judge outage (e.g. exhausted quota) leaves the case unjudged; it
+                            # is not a generator error and must not change the answer metrics.
+                            logger.warning(
+                                "eval_judge_failed", case_id=case.id, error_type=type(exc).__name__
+                            )
+                            result["answer_metrics"]["judge_error"] = type(exc).__name__
+                        else:
+                            result["answer_metrics"].update(judged.scores())
+                            result["answer_metrics"]["judge_verdicts"] = judged.verdicts
         except Exception as exc:
             logger.warning("eval_case_failed", case_id=case.id, error_type=type(exc).__name__)
             result["error"] = f"{type(exc).__name__}: {str(exc)[:300]}"
@@ -798,6 +808,11 @@ def aggregate(
         metrics["answer"]["judged_claims"] = sum(
             r["answer_metrics"].get("judged_claims") or 0 for r in answered
         )
+        metrics["answer"]["judge_coverage"] = {
+            "eligible_cases": sum(1 for r in answered if r["answer_metrics"].get("judge_eligible")),
+            "judged_cases": sum(1 for r in answered if r["answer_metrics"].get("judged_claims")),
+            "failed_cases": sum(1 for r in answered if r["answer_metrics"].get("judge_error")),
+        }
         metrics["latency_ms"]["end_to_end_p50"] = _round(percentile(latencies, 50), 1)
         metrics["latency_ms"]["end_to_end_p95"] = (
             _round(percentile(latencies, 95), 1) if len(latencies) >= MIN_SAMPLES_FOR_P95 else None

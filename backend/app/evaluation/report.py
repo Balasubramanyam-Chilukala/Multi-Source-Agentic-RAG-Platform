@@ -183,6 +183,24 @@ def render_markdown(runs: list[dict[str, Any]], *, title: str) -> str:
             "| Mode | Generator | Answered | Correctness | Completeness | Citation precision | Faithfulness (proxy)* | Faithfulness (judged)† | Partial (judged) | Abstention acc. | Forbidden content | e2e p50 ms |",
             "|---|---|---|---|---|---|---|---|---|---|---|---|",
         ]
+        coverage = [
+            r["metrics"]["answer"].get("judge_coverage")
+            for rs in answer_modes.values()
+            for r in rs
+            if r["metrics"]["answer"].get("judge_coverage")
+        ]
+        coverage_lines: list[str] = []
+        if judge and coverage:
+            eligible = sum(c["eligible_cases"] for c in coverage)
+            judged = sum(c["judged_cases"] for c in coverage)
+            failed = sum(c["failed_cases"] for c in coverage)
+            coverage_lines = [
+                f"Judge coverage across all runs: **{judged} of {eligible}** answered cases with "
+                f"cited sentences were judged"
+                + (f"; {failed} could not be judged (judge unavailable)" if failed else "")
+                + ".",
+                "",
+            ]
         for mode, mode_runs in answer_modes.items():
             generator = f"`{mode_runs[0]['config']['provider']}/{mode_runs[0]['config']['model']}`"
             answered = mode_runs[0]["metrics"].get(
@@ -201,6 +219,7 @@ def render_markdown(runs: list[dict[str, Any]], *, title: str) -> str:
             "† Judged: share of cited sentences the judge labelled *supported* by the passages they cite "
             "(model-judged, not ground truth; see the judge calibration report for its agreement with hand labels).",
             "",
+            *coverage_lines,
         ]
 
     categories = sorted({c for r in runs for c in r["metrics"]["by_category"]})
