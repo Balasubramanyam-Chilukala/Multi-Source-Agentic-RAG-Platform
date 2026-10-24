@@ -1,0 +1,59 @@
+# Render Blueprint for the Atlas AI backend (free web service, Docker runtime).
+# The database is an external Neon free-tier PostgreSQL (pgvector included) because Render's
+# free PostgreSQL expires after 30 days. See docs/deployment.md for the full procedure.
+services:
+  - type: web
+    name: atlas-ai-backend
+    runtime: docker
+    plan: free
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health/live
+    autoDeploy: true
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: LOG_LEVEL
+        value: INFO
+      # Render terminates TLS at its proxy; trust its forwarded headers for client IPs.
+      - key: FORWARDED_ALLOW_IPS
+        value: "*"
+      # Forward-only, reviewed migrations applied at boot (documented strategy, see docs/deployment.md).
+      - key: RUN_MIGRATIONS_ON_START
+        value: "true"
+      - key: LLM_PROVIDER
+        value: groq
+      - key: LLM_MODEL
+        value: openai/gpt-oss-120b
+      - key: EMBEDDING_PROVIDER
+        value: nvidia
+      - key: EMBEDDING_MODEL
+        value: nvidia/nemotron-3.5-embed-1b
+      - key: EMBEDDING_DIMENSION
+        value: "1024"
+      - key: RERANKER_PROVIDER
+        value: none
+      # Ordered chat fallbacks, one account per provider; OpenRouter entries must be ":free".
+      - key: LLM_FALLBACK_CHAIN
+        value: '["groq:openai/gpt-oss-20b","gemini:gemini-3.6-flash","openrouter:nvidia/nemotron-3-ultra-550b-a55b:free","openrouter:poolside/laguna-s-2.1:free","nvidia:nvidia/nemotron-3-ultra-550b-a55b"]'
+      - key: DB_POOL_SIZE
+        value: "3"
+      - key: DB_MAX_OVERFLOW
+        value: "2"
+      - key: JWT_SECRET
+        generateValue: true
+      # Set these in the Render dashboard (never commit them):
+      - key: DATABASE_URL
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: NVIDIA_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: DEMO_SEED_PASSWORD
+        sync: false

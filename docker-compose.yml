@@ -1,0 +1,75 @@
+name: atlas
+
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: atlas
+      POSTGRES_PASSWORD: atlas # local development only
+      POSTGRES_DB: atlas
+    ports:
+      - "${ATLAS_DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U atlas -d atlas"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+
+  # One-off schema migration; the backend starts only after it succeeds.
+  migrate:
+    build: ./backend
+    entrypoint: ["python", "-m", "app.cli", "migrate"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://atlas:atlas@db:5432/atlas
+      LLM_PROVIDER: mock
+      EMBEDDING_PROVIDER: mock
+    depends_on:
+      db:
+        condition: service_healthy
+
+  backend:
+    build: ./backend
+    env_file:
+      - path: ./backend/.env
+        required: false
+    environment:
+      DATABASE_URL: postgresql+psycopg://atlas:atlas@db:5432/atlas
+    ports:
+      - "8000:8000"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/live', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://localhost:8000
+    ports:
+      - "5173:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+
+volumes:
+  pgdata:

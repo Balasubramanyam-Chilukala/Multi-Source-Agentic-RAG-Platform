@@ -1,0 +1,87 @@
+[project]
+name = "atlas-backend"
+version = "0.1.0"
+description = "Atlas AI backend: multi-source agentic RAG API"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.20.1",
+    "beautifulsoup4>=4.15.0",
+    "email-validator>=2.3.0",
+    "fastapi>=0.162.0",
+    "httpx>=0.28.1",
+    "langgraph>=1.2.17",
+    "langgraph-checkpoint-postgres>=3.2.0",
+    "opentelemetry-api>=1.45.1",
+    "pgvector>=0.5.1",
+    "psycopg-pool>=3.3.3",
+    "psycopg[binary]>=3.3.6",
+    "pwdlib[argon2]>=0.3.1",
+    "pydantic>=2.14.1",
+    "pydantic-settings>=2.16.1",
+    "pyjwt>=2.15.1",
+    "pypdf>=6.21.2",
+    "python-docx>=1.2.0",
+    "python-multipart>=0.0.32",
+    "sqlalchemy[asyncio]>=2.1.6",
+    "structlog>=26.1.0",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[project.optional-dependencies]
+rerank-local = [
+    "fastembed>=0.9.0",
+]
+observability = [
+    "opentelemetry-exporter-otlp-proto-http>=1.45.1",
+    "opentelemetry-instrumentation-fastapi>=0.66b1",
+    "opentelemetry-sdk>=1.45.1",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "mypy>=2.4.0",
+    "pip-audit>=2.10.1",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "ruff>=0.17.2",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "ASYNC", "RUF", "SIM", "PL"]
+# Pylint complexity/"magic value" rules flag HTTP status codes and FastAPI's dependency-injected
+# signatures; RUF001 flags intentional typographic characters (e.g. the ‹ › used to neutralize tags).
+ignore = ["PLR0911", "PLR0912", "PLR0913", "PLR0915", "PLR0917", "PLR2004", "RUF001"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S104", "S105", "S106", "S108"]
+"migrations/**" = ["E501"]
+# Prompt text reads better unwrapped.
+"app/agent/prompts.py" = ["E501"]
+# Markdown table templates.
+"app/evaluation/report.py" = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+files = ["app", "migrations", "tests"]
+
+[[tool.mypy.overrides]]
+module = ["pgvector.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+markers = ["integration: requires a running PostgreSQL with pgvector (docker compose up -d db)"]
+addopts = "-ra --strict-markers"

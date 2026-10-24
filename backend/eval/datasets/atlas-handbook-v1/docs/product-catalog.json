@@ -1,0 +1,38 @@
+{
+  "title": "Northwind Robotics Product Catalog",
+  "updated": "2025-02-01",
+  "products": [
+    {
+      "name": "Atlas Arm A7",
+      "category": "collaborative robot arm",
+      "payload_kg": 7,
+      "reach_mm": 900,
+      "repeatability_mm": 0.03,
+      "warranty_years": 3,
+      "list_price_eur": 24500
+    },
+    {
+      "name": "Atlas Arm A12",
+      "category": "collaborative robot arm",
+      "payload_kg": 12,
+      "reach_mm": 1300,
+      "repeatability_mm": 0.05,
+      "warranty_years": 3,
+      "list_price_eur": 33900
+    },
+    {
+      "name": "Rover R2",
+      "category": "autonomous mobile robot",
+      "payload_kg": 150,
+      "battery_hours": 10,
+      "max_speed_m_per_s": 1.5,
+      "warranty_years": 2,
+      "list_price_eur": 41000
+    }
+  ],
+  "support": {
+    "standard_response_hours": 24,
+    "premium_response_hours": 4,
+    "premium_support_price_percent_of_list": 12
+  }
+}

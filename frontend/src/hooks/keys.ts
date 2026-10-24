@@ -1,0 +1,22 @@
+/** TanStack Query keys, grouped per resource so invalidation stays consistent. */
+export const qk = {
+  me: ["me"] as const,
+  dashboard: ["dashboard"] as const,
+  collections: ["collections"] as const,
+  collection: (id: string) => ["collections", id] as const,
+  documents: (collectionId?: string) => ["documents", { collectionId }] as const,
+  documentsAll: ["documents"] as const,
+  document: (id: string) => ["document", id] as const,
+  documentChunks: (id: string, offset: number) => ["document", id, "chunks", offset] as const,
+  chunk: (id: string) => ["chunk", id] as const,
+  conversations: ["conversations"] as const,
+  conversation: (id: string) => ["conversation", id] as const,
+  runs: (outcome?: string, offset = 0) => ["runs", { outcome, offset }] as const,
+  run: (id: string) => ["run", id] as const,
+  settings: ["settings"] as const,
+  system: ["settings", "system"] as const,
+  evaluations: (filters: object) => ["evaluations", filters] as const,
+  evaluationsAll: ["evaluations"] as const,
+  evaluation: (id: string) => ["evaluation", id] as const,
+  datasets: ["evaluation-datasets"] as const,
+};
