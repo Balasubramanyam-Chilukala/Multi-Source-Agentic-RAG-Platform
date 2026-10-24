@@ -61,7 +61,7 @@ migration.
    | `DATABASE_URL` | the Neon URL from Step 2 |
    | `GROQ_API_KEY`, `NVIDIA_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY` | the new keys |
    | `DEMO_SEED_PASSWORD` | a throwaway password of at least 10 characters for the public demo account `demo@atlas.example` |
-   | `CORS_ORIGINS` | `["https://atlas-ai-frontend.onrender.com"]` for now (you correct it in Step 4) |
+   | `CORS_ORIGINS` | `https://atlas-ai-frontend.onrender.com` for now (you correct it in Step 4); a plain URL, a comma-separated list, or a JSON list all work |
    | `VITE_API_BASE_URL` (frontend) | `https://atlas-ai-backend.onrender.com` for now (you correct it in Step 4) |
 
    `JWT_SECRET` is generated automatically, and everything else comes from `render.yaml`.
@@ -84,8 +84,8 @@ suffix, for example `atlas-ai-backend-x7k2.onrender.com`.
    slash), save, then click **Manual Deploy → Deploy latest commit**. The value is compiled into
    the bundle, so the site must be rebuilt.
 3. Copy the real frontend URL from the **atlas-ai-frontend** page.
-4. Open **atlas-ai-backend → Environment**, set `CORS_ORIGINS` to `["https://<your-frontend>.onrender.com"]`
-   (JSON list, exact origin, no trailing slash), and save. The backend redeploys on its own.
+4. Open **atlas-ai-backend → Environment**, set `CORS_ORIGINS` to `https://<your-frontend>.onrender.com`
+   (the exact origin), and save. The backend redeploys on its own.
 5. Under **atlas-ai-frontend → Redirects/Rewrites**, confirm there is a rewrite `/*` →
    `/index.html`. If the blueprint didn't create it, add it there. Without it, refreshing a
    page such as `/chat/...` returns 404.

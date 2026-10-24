@@ -5,12 +5,13 @@ never end up in logs by accident. Validation runs once at startup; an invalid co
 fails fast with a message that names the offending setting but never echoes its value.
 """
 
+import json
 import secrets
 from functools import lru_cache
-from typing import Literal, Self
+from typing import Annotated, Literal, Self
 
 from pydantic import AliasChoices, Field, SecretStr, field_validator, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 Environment = Literal["development", "test", "production"]
 LLMProvider = Literal["groq", "nvidia", "gemini", "openrouter", "mock"]
@@ -68,7 +69,8 @@ class Settings(BaseSettings):
     db_pool_timeout_seconds: float = Field(default=10.0, gt=0)
     db_connect_timeout_seconds: int = Field(default=5, ge=1, le=60)
 
-    cors_origins: list[str] = ["http://localhost:5173"]
+    # Accepts a JSON list, a comma-separated list, or a single URL (see _parse_list).
+    cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:5173"]
 
     # --- Authentication ---
     # Required in production. In development a random per-process secret is generated, which
@@ -86,7 +88,7 @@ class Settings(BaseSettings):
     # ["groq:openai/gpt-oss-20b", "gemini:gemini-3.6-flash",
     #  "openrouter:nvidia/nemotron-3-ultra-550b-a55b:free",
     #  "nvidia:nvidia/nemotron-3-ultra-550b-a55b"]
-    llm_fallback_chain: list[str] = []
+    llm_fallback_chain: Annotated[list[str], NoDecode] = []
     # Within a chain, fail over quickly instead of waiting on one provider's rate-limit reset.
     chain_max_retries: int = Field(default=1, ge=0, le=5)
     chain_max_backoff_seconds: float = Field(default=2.0, gt=0, le=30)
@@ -147,7 +149,7 @@ class Settings(BaseSettings):
     max_pdf_pages: int = Field(default=500, ge=1)
     chunk_size: int = Field(default=1000, ge=100, le=8000)
     chunk_overlap: int = Field(default=150, ge=0)
-    url_allowed_hosts: list[str] = []  # empty = any public host
+    url_allowed_hosts: Annotated[list[str], NoDecode] = []  # empty = any public host
     url_fetch_timeout_seconds: float = Field(default=15.0, gt=0, le=120)
     url_max_redirects: int = Field(default=3, ge=0, le=10)
 
@@ -181,6 +183,32 @@ class Settings(BaseSettings):
         if isinstance(value, str) and not value.strip():
             return None
         return value
+
+    @field_validator("cors_origins", "llm_fallback_chain", "url_allowed_hosts", mode="before")
+    @classmethod
+    def _parse_list(cls, value: object) -> object:
+        """Lists from env vars: a JSON list (``["a","b"]``), comma-separated (``a,b``), or a single
+        value. Dashboards make the JSON form easy to get wrong, and a typo must not crash boot."""
+        if not isinstance(value, str):
+            return value
+        text = value.strip()
+        if not text:
+            return []
+        if text.startswith("["):
+            try:
+                parsed = json.loads(text)
+            except json.JSONDecodeError:
+                raise ValueError(
+                    "must be a JSON list, a comma-separated list, or a single value"
+                ) from None
+            return parsed
+        return [item.strip() for item in text.split(",") if item.strip()]
+
+    @field_validator("cors_origins")
+    @classmethod
+    def _normalize_origins(cls, origins: list[str]) -> list[str]:
+        # Browsers send Origin without a trailing slash, so "https://x.com/" would never match.
+        return [origin.strip().rstrip("/") for origin in origins]
 
     @field_validator("database_url")
     @classmethod

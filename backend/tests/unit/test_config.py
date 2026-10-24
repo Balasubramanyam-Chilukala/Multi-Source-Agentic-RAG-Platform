@@ -126,3 +126,44 @@ def test_mock_provider_reports_the_mock_model(make_settings: Callable[..., Setti
     settings = make_settings(llm_provider="mock", llm_model="openai/gpt-oss-120b")
     assert settings.llm_model == "mock-extractive"
     assert WorkspaceSettings.effective(settings, {}).llm_model == "mock-extractive"
+
+
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [
+        ("https://atlas-ai-frontend.onrender.com", ["https://atlas-ai-frontend.onrender.com"]),
+        ("https://atlas-ai-frontend.onrender.com/", ["https://atlas-ai-frontend.onrender.com"]),
+        (
+            '["https://a.example.com", "https://b.example.com/"]',
+            ["https://a.example.com", "https://b.example.com"],
+        ),
+        (
+            "https://a.example.com, https://b.example.com",
+            ["https://a.example.com", "https://b.example.com"],
+        ),
+        ("", []),
+    ],
+)
+def test_cors_origins_accept_plain_comma_or_json(
+    monkeypatch: pytest.MonkeyPatch, raw: str, expected: list[str]
+) -> None:
+    # Render deploy failure: a plain URL in CORS_ORIGINS crashed startup (JSON was required).
+    monkeypatch.setenv("CORS_ORIGINS", raw)
+    loaded = Settings(
+        _env_file=None, environment="test", llm_provider="mock", embedding_provider="mock"
+    )
+    assert loaded.cors_origins == expected
+
+
+def test_malformed_json_list_gives_a_clear_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("CORS_ORIGINS", '["https://a.example.com"')
+    with pytest.raises(ValidationError, match="JSON list, a comma-separated list"):
+        Settings(_env_file=None, environment="test", llm_provider="mock", embedding_provider="mock")
+
+
+def test_fallback_chain_accepts_comma_separated(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("LLM_FALLBACK_CHAIN", "mock:a, mock:b")
+    loaded = Settings(
+        _env_file=None, environment="test", llm_provider="mock", embedding_provider="mock"
+    )
+    assert loaded.chat_chain() == [("mock", "a"), ("mock", "b")]
