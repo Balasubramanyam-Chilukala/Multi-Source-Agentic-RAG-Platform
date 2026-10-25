@@ -38,8 +38,8 @@ function AuthLayout({ title, subtitle, children }: { title: string; subtitle: Re
             { icon: Workflow, title: "Inspectable agent", text: "See each step: routing, retrieval attempts, scores, citation checks and token usage." },
             { icon: ShieldCheck, title: "Measured quality", text: "Reference-based evaluation of recall, MRR, nDCG and answer faithfulness." },
           ].map(({ icon: Icon, title: t, text }) => (
-            <li key={t} className="flex gap-3">
-              <div className="mt-0.5 rounded-md bg-accent p-2 text-accent-foreground">
+            <li key={t} className="flex items-start gap-3">
+              <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md bg-accent text-accent-foreground">
                 <Icon className="size-4" aria-hidden />
               </div>
               <div>
