@@ -125,7 +125,10 @@ class Settings(BaseSettings):
     provider_max_backoff_seconds: float = Field(default=20.0, gt=0, le=120)
 
     # --- Retrieval defaults (tenants can override some in Settings) ---
-    retrieval_mode: RetrievalMode = "hybrid"
+    # Dense by default: on both held-out test splits it ranks at least as well as hybrid, and
+    # tuning the lexical weight on the dev splits chose 0 (see docs/adr/0007). Workspaces can
+    # still choose hybrid or hybrid_rerank.
+    retrieval_mode: RetrievalMode = "dense"
     retrieval_top_k: int = Field(default=6, ge=1, le=50)
     retrieval_candidate_k: int = Field(default=24, ge=1, le=200)
     rrf_k: int = Field(default=60, ge=1, le=1000)
