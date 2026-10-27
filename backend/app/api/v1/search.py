@@ -60,6 +60,7 @@ def retrieval_config(
         top_k=top_k or workspace.top_k,
         candidate_k=max(settings.retrieval_candidate_k, top_k or workspace.top_k),
         rrf_k=settings.rrf_k,
+        lexical_weight=settings.rrf_lexical_weight,
         min_dense_similarity=workspace.min_dense_similarity,
         min_lexical_coverage=settings.min_lexical_coverage,
         min_rerank_score=settings.min_rerank_score,
