@@ -12,9 +12,9 @@ import { useAuth } from "@/lib/auth";
 import { formatBytes, humanize } from "@/lib/utils";
 
 const MODE_HELP: Record<string, string> = {
-  dense: "Embedding similarity only",
+  dense: "Embedding similarity only (server default; best on our benchmarks)",
   lexical: "Full-text keyword search only",
-  hybrid: "Dense + lexical fused with RRF",
+  hybrid: "Dense + lexical fused with RRF; can help exact codes and names",
   hybrid_rerank: "Hybrid, then a cross-encoder reranker",
 };
 
