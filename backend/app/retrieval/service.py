@@ -125,7 +125,9 @@ class Retriever:
             ranked = lexical
         else:
             started = time.perf_counter()
-            ranked = reciprocal_rank_fusion([dense, lexical], k=config.rrf_k)
+            ranked = reciprocal_rank_fusion(
+                [dense, lexical], k=config.rrf_k, weights=[1.0, config.lexical_weight]
+            )
             timings["fusion"] = _ms(started)
 
         rerank_pool = (
