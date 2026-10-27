@@ -49,6 +49,33 @@ def test_rrf_rejects_non_positive_k() -> None:
         reciprocal_rank_fusion([ranked(A)], k=0)
 
 
+def test_weighted_rrf_scales_each_ranking() -> None:
+    fused = reciprocal_rank_fusion([ranked(A, B), ranked(B, C)], k=60, weights=[1.0, 0.5])
+    scores = {r.chunk_id: r.score for r in fused}
+    assert scores[B] == pytest.approx(1 / 62 + 0.5 / 61)
+    assert scores[C] == pytest.approx(0.5 / 62)
+
+
+def test_down_weighted_lexical_cannot_overturn_a_dense_top_hit() -> None:
+    dense, lexical = ranked(A, B), ranked(B, C, A)
+    # Equal weights: B (2nd + 1st) beats the dense top hit A (1st + 3rd): 1/62 + 1/61 > 1/61 + 1/63.
+    assert reciprocal_rank_fusion([dense, lexical])[0].chunk_id == B
+    # At 0.3 the lexical list only breaks near-ties, so A keeps its place.
+    assert reciprocal_rank_fusion([dense, lexical], weights=[1.0, 0.3])[0].chunk_id == A
+
+
+def test_zero_weight_reproduces_the_first_ranking() -> None:
+    fused = reciprocal_rank_fusion([ranked(A, B, C), ranked(C, D)], weights=[1.0, 0.0])
+    assert [r.chunk_id for r in fused][:3] == [A, B, C]
+
+
+def test_rrf_validates_weights() -> None:
+    with pytest.raises(ValueError, match="one weight per ranking"):
+        reciprocal_rank_fusion([ranked(A), ranked(B)], weights=[1.0])
+    with pytest.raises(ValueError, match="non-negative"):
+        reciprocal_rank_fusion([ranked(A)], weights=[-0.1])
+
+
 def chunk(text: str, dense: float | None = None, rerank: float | None = None) -> EvidenceChunk:
     return EvidenceChunk(
         chunk_id=uuid.uuid4(),
