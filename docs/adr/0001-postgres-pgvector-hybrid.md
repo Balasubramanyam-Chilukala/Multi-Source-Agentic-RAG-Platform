@@ -1,6 +1,7 @@
 # ADR 0001 — PostgreSQL + pgvector for relational, vector, and lexical data
 
-- Status: Accepted (2026-10-24)
+- Status: Accepted (2026-10-24). The default retrieval mode was later changed to dense by
+  [ADR 0007](0007-dense-default-retrieval.md); the storage and search design below is unchanged.
 
 ## Context
 Atlas AI needs relational records (tenants, documents, conversations), dense vectors,
