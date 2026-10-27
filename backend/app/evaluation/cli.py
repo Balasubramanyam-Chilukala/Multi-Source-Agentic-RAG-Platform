@@ -5,6 +5,7 @@
     uv run python -m app.cli evaluate --modes hybrid --answers --runs 3 --judge gemini:gemini-3.6-flash
     uv run python -m app.cli evaluate --judge-calibration --judge gemini:gemini-3.6-flash
     uv run python -m app.cli evaluate --calibrate-threshold                     # tunes on the dev split only
+    uv run python -m app.cli evaluate --calibrate-fusion --dataset atlas-handbook-v1,scifact
 
 Reported numbers use the ``test`` split; ``--split dev`` is for tuning. During benchmarks the
 generator is pinned to the configured model (no fallback chain, patient retries) so a run is
@@ -228,6 +229,90 @@ async def judge_calibration(settings: Settings, judge_spec: str, out_dir: Path) 
     return target / f"{stamp}.md"
 
 
+FUSION_WEIGHT_GRID = (0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 1.0)
+
+
+def choose_weight(curve: list[dict[str, Any]]) -> float:
+    """The weight with the highest mean dev nDCG across datasets; ties go to the smaller weight
+    (less lexical influence is the simpler model)."""
+    best = max(curve, key=lambda point: (point["mean_ndcg"], -point["lexical_weight"]))
+    return float(best["lexical_weight"])
+
+
+async def calibrate_fusion(
+    settings: Settings, datasets: list[str], top_k: int, out_dir: Path
+) -> Path:
+    """Choose RRF_LEXICAL_WEIGHT on the dev splits: hybrid retrieval is run once per weight in
+    FUSION_WEIGHT_GRID, and the weight with the best mean nDCG@k across datasets wins. Weight 0
+    is the dense ranking. BEIR datasets are scored at k = 10, as in BEIR."""
+    database = Database.from_settings(settings)
+    providers = ProviderRegistry(settings)
+    per_dataset: dict[str, list[dict[str, Any]]] = {}
+    try:
+        tenant_id = await _tenant(database)
+        for name in datasets:
+            k = 10 if load_dataset(name, download=False).format == "beir" else top_k
+            options = EvalOptions(dataset=name, modes=["hybrid"], split="dev", runs=1, top_k=k)
+            points = []
+            for weight in FUSION_WEIGHT_GRID:
+                weighted = Settings(**{**settings.model_dump(), "rrf_lexical_weight": weight})
+                runner = EvaluationRunner(
+                    database.sessionmaker,
+                    providers,
+                    weighted,
+                    IngestionPipeline(
+                        database.sessionmaker, providers, weighted, max_concurrency=1
+                    ),
+                )
+                run_ids = await runner.create_runs(tenant_id, options)
+                await runner.execute(tenant_id, run_ids, options)
+                collected, failures = await _collect(database, run_ids, name)
+                if failures:
+                    raise RuntimeError("calibration run failed: " + "; ".join(failures))
+                retrieval = collected[0]["metrics"]["retrieval"]
+                points.append(
+                    {
+                        "lexical_weight": weight,
+                        "k": k,
+                        "case_count": collected[0]["metrics"]["labelled_case_count"],
+                        **{key: retrieval[key] for key in ("mrr", "ndcg@k", "recall@k")},
+                    }
+                )
+                print(
+                    f"{name} weight={weight}: nDCG@{k}={retrieval['ndcg@k']} MRR={retrieval['mrr']}"
+                )
+            per_dataset[name] = points
+    finally:
+        await providers.aclose()
+        await database.dispose()
+    curve = [
+        {
+            "lexical_weight": weight,
+            "mean_ndcg": round(
+                sum(per_dataset[n][i]["ndcg@k"] for n in datasets) / len(datasets), 4
+            ),
+            **{f"{n}:ndcg@k": per_dataset[n][i]["ndcg@k"] for n in datasets},
+        }
+        for i, weight in enumerate(FUSION_WEIGHT_GRID)
+    ]
+    summary = {
+        "split": "dev",
+        "datasets": datasets,
+        "objective": "mean nDCG@k across datasets (hybrid mode); ties -> smaller weight",
+        "chosen_lexical_weight": choose_weight(curve),
+        "rrf_k": settings.rrf_k,
+        "curve": curve,
+        "per_dataset": per_dataset,
+    }
+    stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    target = out_dir / "fusion-calibration"
+    target.mkdir(parents=True, exist_ok=True)
+    path = target / f"{stamp}.json"
+    path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    print(json.dumps({k: v for k, v in summary.items() if k != "per_dataset"}, indent=2))
+    return path
+
+
 async def calibrate_threshold(
     settings: Settings, dataset: str, target_pass: float, out_dir: Path
 ) -> Path:
@@ -338,6 +423,17 @@ def main(argv: list[str] | None = None) -> None:
         help="choose MIN_DENSE_SIMILARITY on the dev split",
     )
     parser.add_argument(
+        "--calibrate-fusion",
+        action="store_true",
+        help="choose RRF_LEXICAL_WEIGHT on the dev split(s) of --dataset (comma-separated)",
+    )
+    parser.add_argument(
+        "--lexical-weight",
+        type=float,
+        default=None,
+        help="override RRF_LEXICAL_WEIGHT for this run (0 = dense order, 1 = plain RRF)",
+    )
+    parser.add_argument(
         "--target-pass",
         type=float,
         default=0.95,
@@ -372,6 +468,8 @@ def main(argv: list[str] | None = None) -> None:
             reranker_model="term-coverage",
             llm_fallback_chain=[],
         )
+    if args.lexical_weight is not None:
+        overrides["rrf_lexical_weight"] = args.lexical_weight
     if args.reranker:
         overrides["reranker_provider"] = args.reranker
         if args.reranker == "local":
@@ -390,6 +488,15 @@ def main(argv: list[str] | None = None) -> None:
             judge_calibration(settings, args.judge, args.out), loop_factory=loop_factory
         )
         print(f"judge calibration written to {path}")
+        return
+    if args.calibrate_fusion:
+        path = asyncio.run(
+            calibrate_fusion(
+                settings, [d.strip() for d in args.dataset.split(",")], args.top_k, args.out
+            ),
+            loop_factory=loop_factory,
+        )
+        print(f"fusion calibration written to {path}")
         return
     if args.calibrate_threshold:
         path = asyncio.run(
