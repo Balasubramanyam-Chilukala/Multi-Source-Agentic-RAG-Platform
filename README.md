@@ -23,7 +23,7 @@ it apart from a chatbot over files:
 >
 > The repository is named `Multi-Source-Agentic-RAG-Platform`; the product is Atlas AI.
 
-## Measured quality (2026-10-24)
+## Measured quality (2026-10-27)
 
 All numbers are from real runs on **test splits that were not used for any tuning**. Raw
 per-case results are committed under [`backend/eval/results/`](backend/eval/results/), and
@@ -32,17 +32,22 @@ error analysis.
 
 ### Answers: held-out handbook test split (31 questions, 3 repetitions)
 
-Generator `groq/openai/gpt-oss-20b`, hybrid retrieval, k = 5. Cells show mean ± sd over the
-three runs.
+The shipped configuration: generator `groq/openai/gpt-oss-120b`, dense retrieval, k = 5. Cells
+show mean ± sd over the three runs.
 
-| Metric | Result |
-|---|---|
-| Correctness (all required facts, no forbidden ones) | **0.925 ± 0.019** |
-| Citation precision (cited passages that are labelled relevant) | **1.000** |
-| Faithfulness, model-judged (cited sentences the judge rated *supported*) | **0.986 ± 0.025** (77 claims, 72 of 72 eligible answers judged) |
-| Abstention accuracy (decline unanswerable, answer answerable) | **0.925 ± 0.019** |
-| Injected or superseded content in answers | **0.000** (a poisoned document never steered an answer) |
-| End-to-end latency p50 | 1.6 s |
+| Metric | gpt-oss-120b, dense (default) | gpt-oss-20b, hybrid |
+|---|---|---|
+| Correctness (all required facts, no forbidden ones) | **0.914 ± 0.019** | 0.925 ± 0.019 |
+| Citation precision (cited passages that are labelled relevant) | **1.000** | 1.000 |
+| Faithfulness, model-judged (cited sentences rated *supported*) | **1.000** (93 claims; 73 of 73 eligible answers judged) | 0.986 ± 0.025 (77 claims) |
+| Abstention accuracy (decline unanswerable, answer answerable) | **0.914 ± 0.019** | 0.925 ± 0.019 |
+| Injected or superseded content in answers | **0** of 93 | 0 of 93 |
+| End-to-end latency p50 | 1.5 s | 1.6 s |
+
+The two columns differ in both the generator and the retrieval mode, so they show that results
+hold across configurations; they do not isolate either change. The misses are the same kind in
+both: one ambiguous question answered with a guess, and a few answerable questions declined
+(the system errs towards abstaining).
 
 The faithfulness judge is `nvidia/nemotron-3-ultra`, a different model family from the
 generator. On 32 hand-labelled (claim, passage) pairs it agreed on **29 of 32 labels (0.906)**,
@@ -52,35 +57,45 @@ verdicts** ([calibration report](backend/eval/results/judge-calibration/20261024
 ### Retrieval: BEIR SciFact test split (5,183 abstracts, 300 claims)
 
 A public benchmark scored at document level as in BEIR (nDCG@10, Recall@10). The 95% CIs are a
-paired bootstrap over the 300 claims against hybrid.
+paired bootstrap over the 300 claims, against plain hybrid.
 
 | Mode | nDCG@10 | Recall@10 | MRR | Δ MRR vs. hybrid [95% CI] | p50 |
 |---|---|---|---|---|---|
-| dense (pgvector HNSW) | **0.745** | **0.851** | **0.721** | +0.124 [+0.089, +0.158] | 92 ms |
-| lexical (PostgreSQL FTS) | 0.401 | 0.563 | 0.361 | −0.235 [−0.273, −0.200] | 134 ms |
-| hybrid (RRF, the default) | 0.633 | 0.797 | 0.596 | — | 162 ms |
+| **dense (pgvector HNSW, the default)** | **0.745** | **0.851** | **0.721** | +0.124 [+0.089, +0.158] | 92 ms |
+| hybrid, lexical weight 0.1 (tuned runner-up) | 0.725 | 0.851 | 0.694 | +0.097 (separate run, no paired CI) | 110 ms |
 | hybrid + MiniLM rerank | 0.704 | 0.847 | 0.668 | +0.072 [+0.035, +0.110] | 3.7 s |
+| hybrid (plain RRF, the old default) | 0.633 | 0.797 | 0.596 | — | 162 ms |
+| lexical (PostgreSQL FTS) | 0.401 | 0.563 | 0.361 | −0.235 [−0.273, −0.200] | 134 ms |
 
-### What these numbers do and don't show
+### How the default was chosen: found, tuned, measured
 
-- **Dense beats the default hybrid mode** on SciFact and on the handbook test split (Δ MRR
-  +0.107, CI [+0.027, +0.200]). PostgreSQL's `ts_rank_cd` has no IDF term, so on SciFact the
-  lexical leg scores far below published BM25 (≈ 0.67 nDCG@10) and drags the equal-weight fusion
-  down. Hybrid stays the default only on the untested argument that lexical matching protects
-  exact identifiers; switching the default to dense, or adding real BM25, is the indicated fix.
+1. **Found.** The first held-out results showed plain hybrid losing to dense on *both* test
+   sets: SciFact Δ MRR −0.124, handbook −0.107, with both CIs excluding zero. The cause is the
+   lexical leg: PostgreSQL's `ts_rank_cd` has no IDF term (0.401 nDCG@10 on SciFact against
+   ≈ 0.67 for BM25), and equal-weight fusion let it push good dense hits down.
+2. **Tuned on dev.** Instead of switching by assumption, the lexical list got a fusion weight,
+   tuned on the dev splits only (handbook 29 questions, SciFact 809 claims), maximising mean
+   nDCG. Weight 0 (pure dense order) won at 0.871 mean dev nDCG, ahead of 0.1 (0.869) and plain
+   RRF at 1.0 (0.814).
+3. **Measured on test.** Down-weighting closes most of the gap (SciFact 0.633 → 0.725), but
+   dense is still significantly better (Δ MRR +0.027, CI [+0.009, +0.046]) and ties on the
+   handbook. So **dense is now the default** ([ADR 0007](docs/adr/0007-dense-default-retrieval.md)).
+   Hybrid remains available per workspace for identifier-heavy queries, a case neither benchmark
+   covers.
+
+### What else the numbers do and don't show
+
 - **The reranker helps on SciFact and makes no significant difference on the handbook**, at
   roughly 1.4–3.7 s per query on CPU.
 - **Repeated runs agree exactly on retrieval** (deterministic embeddings), so the bootstrap CIs
   over queries are the real error bars. Answer metrics vary slightly between runs.
-- **The abstention threshold was calibrated on the dev split only** (0.32). It still blocks one
-  answerable test paraphrase (top similarity 0.256), which the agent then rescues by rewriting
-  the query in some runs. That is a real dev→test generalisation miss, left unfixed rather than
-  tuned on test.
-- **Limits:** the handbook is small (31 test questions) and its labels were written by the
-  project author. The judge calibration set is small and author-labelled too. The primary
-  production generator (`gpt-oss-120b`) has not yet completed a 3-repetition run on the new
-  protocol: Groq's free tier allows 200k tokens per model per day, and it ran out during the
-  attempt.
+- **The abstention threshold was calibrated on the dev split only** (0.32). It blocks one
+  answerable test paraphrase (pp-03, top similarity 0.256): with dense retrieval that question
+  is declined in all three runs. It is a real dev→test generalisation miss, left unfixed rather
+  than tuned on test.
+- **Limits:** the handbook is small (31 test questions), and its labels were written by the
+  project author. The judge calibration set is also small and author-labelled. SciFact
+  measures retrieval only.
 
 ## How it compares
 
@@ -92,7 +107,7 @@ audit, and adapt** such a system:
 | Concern | Typical approach | Atlas AI |
 |---|---|---|
 | Citations | Generated by the model | **Validated in code**: every marker must reference a passage retrieved for that answer; fabricated sources and foreign links are removed; unsupported answers become an explicit abstention |
-| "Is it any good?" | Demos and anecdotes | **Measured on held-out data**: a public BEIR corpus plus a domain test split, repeated runs, bootstrap CIs, a calibrated faithfulness judge, and published negative results (hybrid lost to dense) |
+| "Is it any good?" | Demos and anecdotes | **Measured on held-out data**: a public BEIR corpus plus a domain test split, repeated runs, bootstrap CIs, a calibrated faithfulness judge, and published negative results (hybrid lost to dense, so the default was re-tuned and changed) |
 | Debugging a bad answer | Black box | **Run inspector**: executed agent steps, each retrieval attempt with per-passage scores, the sufficiency verdict, provider/model, tokens, and which fallbacks were skipped |
 | Prompt injection | Usually untested | **Tested**: a poisoned document in the benchmark; injected content appeared in 0 answers across 93 test-split generations |
 | Multi-tenancy | Often app-level filtering | **Inside every SQL query**, with tests using forged tokens, deactivated users, and cross-tenant IDs |
@@ -108,9 +123,9 @@ It is a portfolio-scale system: single-instance deployment and free model tiers.
   the query and retry (bounded), call a tool (calculation, document metadata, summarizing a
   named document), ask a clarifying question, or abstain. A hard budget caps LLM calls, and
   short-term memory lives in a PostgreSQL checkpointer.
-- **Hybrid retrieval in one database.** pgvector HNSW (dense) plus PostgreSQL full-text search
-  (lexical, `ts_rank_cd`; not BM25), fused with Reciprocal Rank Fusion, with optional
-  cross-encoder reranking. Every query is filtered by tenant inside SQL.
+- **Retrieval in one database.** Dense pgvector HNSW by default. Optional hybrid mode adds
+  PostgreSQL full-text search (lexical, `ts_rank_cd`; not BM25) through weighted Reciprocal Rank
+  Fusion, and an optional cross-encoder reranker. Every query is filtered by tenant inside SQL.
 - **Multi-tenant and defensive.** JWT auth with membership re-checked on every request; roles;
   404 (not 403) for other tenants' objects; protection against fetching internal addresses
   during URL ingestion; parser limits against oversized and decompression-bomb files; layered
@@ -205,7 +220,8 @@ The important ones:
 | `LLM_PROVIDER` / `LLM_MODEL` | `groq` / `openai/gpt-oss-120b` | `groq`, `nvidia`, `gemini`, `openrouter`, or `mock` |
 | `EMBEDDING_PROVIDER` / `EMBEDDING_MODEL` / `EMBEDDING_DIMENSION` | `nvidia` / `nvidia/nemotron-3.5-embed-1b` / `1024` | `mock` for offline use |
 | `RERANKER_PROVIDER` / `RERANKER_MODEL` | `none` | `local` (needs `uv sync --extra rerank-local`), `nvidia`, or `mock` |
-| `RETRIEVAL_MODE`, `RETRIEVAL_TOP_K` | `hybrid`, `6` | Workspaces can override these in Settings |
+| `RETRIEVAL_MODE`, `RETRIEVAL_TOP_K` | `dense`, `6` | Workspaces can override these in Settings ([why dense](docs/adr/0007-dense-default-retrieval.md)) |
+| `RRF_LEXICAL_WEIGHT` | `1.0` | Lexical weight in hybrid fusion; tune with `--calibrate-fusion` |
 | `AGENT_MAX_RETRIEVAL_ATTEMPTS`, `AGENT_MAX_LLM_CALLS` | `2`, `4` | Hard per-request budgets |
 | `JWT_SECRET` | random in development | Required (≥ 32 characters) in production |
 | `LLM_FALLBACK_CHAIN` | `[]` | Ordered `"provider:model"` fallbacks (one account per provider) used on rate limits, outages, timeouts, unavailable models, or empty answers. OpenRouter entries must be `:free` or the server refuses to start |
@@ -230,12 +246,14 @@ builds, without any secrets.
 
 ```bash
 cd backend
-uv run python -m app.cli evaluate --modes all --mock                                   # offline, deterministic (CI)
-uv run python -m app.cli evaluate --modes all --runs 3 --reranker local                # handbook test split, real embeddings
-uv run python -m app.cli evaluate --dataset scifact --modes all --runs 3 --top-k 10     --reranker local                                                                   # public BEIR corpus (downloaded, checksum-pinned)
-uv run python -m app.cli evaluate --modes hybrid --answers --runs 3     --judge nvidia:nvidia/nemotron-3-ultra-550b-a55b --pause 8                         # answers + judged faithfulness (~80k tokens)
+uv run python -m app.cli evaluate --modes all --mock                     # offline, deterministic (CI)
+uv run python -m app.cli evaluate --modes all --runs 3 --reranker local  # handbook test split
+uv run python -m app.cli evaluate --dataset scifact --modes all --top-k 10 --reranker local
+uv run python -m app.cli evaluate --modes dense --answers --runs 3 \
+    --judge nvidia:nvidia/nemotron-3-ultra-550b-a55b --pause 8          # answers + judged faithfulness (~75k tokens)
 uv run python -m app.cli evaluate --judge-calibration --judge nvidia:nvidia/nemotron-3-ultra-550b-a55b
-uv run python -m app.cli evaluate --calibrate-threshold                                # tunes MIN_DENSE_SIMILARITY on the dev split only
+uv run python -m app.cli evaluate --calibrate-threshold                  # MIN_DENSE_SIMILARITY, dev split only
+uv run python -m app.cli evaluate --calibrate-fusion --dataset atlas-handbook-v1,scifact  # RRF_LEXICAL_WEIGHT, dev only
 ```
 
 - Runs report on the **test** split by default; `--split dev` is for tuning. The generator is
@@ -264,9 +282,9 @@ not proofs.
 
 - The domain benchmark is small (31 test questions), and its labels and the judge calibration
   set were written by the project author. The public SciFact benchmark covers retrieval only.
-- The default hybrid mode is measurably worse than dense on both benchmarks (see
-  [Measured quality](#measured-quality-2026-10-24)); the lexical leg is PostgreSQL FTS, not
-  BM25.
+- The lexical leg is PostgreSQL FTS (`ts_rank_cd`), not BM25. It is weak enough that hybrid
+  search loses to dense even with a tuned weight, and identifier-heavy queries, where it should
+  help, are not benchmarked.
 - No OCR.
 - Ingestion runs in-process (interrupted jobs are recovered as retryable failures, but there
   is no durable queue).
@@ -288,7 +306,7 @@ To be added from the deployed app. The Playwright visual spec can capture them:
 - Stronger or domain-tuned reranker.
 - OCR.
 - Invitations and SSO.
-- BM25 (or a weighted fusion tuned on the dev split) for the lexical leg, and a dense default.
-- A 3-repetition answer run with `gpt-oss-120b` once Groq's daily token budget allows it.
+- BM25 or a learned sparse retriever for the lexical leg, plus an identifier-heavy benchmark;
+  then re-run the fusion tuning, which could bring hybrid back.
 - Independently labelled evaluation data.
 - Redis-backed rate limits for multiple replicas.
