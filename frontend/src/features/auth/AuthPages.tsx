@@ -34,7 +34,7 @@ function AuthLayout({ title, subtitle, children }: { title: string; subtitle: Re
         </div>
         <ul className="max-w-md space-y-4 text-sm">
           {[
-            { icon: FileSearch, title: "Hybrid retrieval", text: "Dense + lexical search with optional reranking across PDFs, docs, pages and data files." },
+            { icon: FileSearch, title: "Benchmarked retrieval", text: "Dense, lexical or hybrid search with optional reranking across PDFs, docs, pages and data files." },
             { icon: Workflow, title: "Inspectable agent", text: "See each step: routing, retrieval attempts, scores, citation checks and token usage." },
             { icon: ShieldCheck, title: "Measured quality", text: "Reference-based evaluation of recall, MRR, nDCG and answer faithfulness." },
           ].map(({ icon: Icon, title: t, text }) => (
