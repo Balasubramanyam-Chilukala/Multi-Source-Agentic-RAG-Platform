@@ -108,7 +108,8 @@ def render_markdown(
             if unit == "document"
             else " (labels name the passage that contains the answer)"
         ),
-        f"- k = {cfg['top_k']}, candidate pool = {cfg['candidate_k']}, RRF k = {cfg['rrf_k']}",
+        f"- k = {cfg['top_k']}, candidate pool = {cfg['candidate_k']}, RRF k = {cfg['rrf_k']}, "
+        f"lexical weight in hybrid = {cfg.get('lexical_weight', 1.0)}",
         f"- Embedding model: `{cfg['embedding_model']}`; chunk size {cfg['chunk_size']} / overlap {cfg['chunk_overlap']}",
         f"- Generated: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')}",
         *(
