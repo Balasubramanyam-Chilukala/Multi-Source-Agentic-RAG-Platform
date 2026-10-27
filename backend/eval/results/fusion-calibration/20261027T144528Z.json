@@ -1,0 +1,194 @@
+{
+  "split": "dev",
+  "datasets": [
+    "atlas-handbook-v1",
+    "scifact"
+  ],
+  "objective": "mean nDCG@k across datasets (hybrid mode); ties -> smaller weight",
+  "chosen_lexical_weight": 0.0,
+  "rrf_k": 60,
+  "curve": [
+    {
+      "lexical_weight": 0.0,
+      "mean_ndcg": 0.8707,
+      "atlas-handbook-v1:ndcg@k": 0.9692,
+      "scifact:ndcg@k": 0.7723
+    },
+    {
+      "lexical_weight": 0.1,
+      "mean_ndcg": 0.869,
+      "atlas-handbook-v1:ndcg@k": 0.9846,
+      "scifact:ndcg@k": 0.7533
+    },
+    {
+      "lexical_weight": 0.2,
+      "mean_ndcg": 0.8579,
+      "atlas-handbook-v1:ndcg@k": 0.9846,
+      "scifact:ndcg@k": 0.7313
+    },
+    {
+      "lexical_weight": 0.3,
+      "mean_ndcg": 0.8486,
+      "atlas-handbook-v1:ndcg@k": 0.9846,
+      "scifact:ndcg@k": 0.7125
+    },
+    {
+      "lexical_weight": 0.4,
+      "mean_ndcg": 0.8436,
+      "atlas-handbook-v1:ndcg@k": 0.9846,
+      "scifact:ndcg@k": 0.7026
+    },
+    {
+      "lexical_weight": 0.5,
+      "mean_ndcg": 0.839,
+      "atlas-handbook-v1:ndcg@k": 0.9846,
+      "scifact:ndcg@k": 0.6933
+    },
+    {
+      "lexical_weight": 0.7,
+      "mean_ndcg": 0.8346,
+      "atlas-handbook-v1:ndcg@k": 0.9846,
+      "scifact:ndcg@k": 0.6845
+    },
+    {
+      "lexical_weight": 1.0,
+      "mean_ndcg": 0.8135,
+      "atlas-handbook-v1:ndcg@k": 0.9692,
+      "scifact:ndcg@k": 0.6578
+    }
+  ],
+  "per_dataset": {
+    "atlas-handbook-v1": [
+      {
+        "lexical_weight": 0.0,
+        "k": 5,
+        "case_count": 24,
+        "mrr": 0.9583,
+        "ndcg@k": 0.9692,
+        "recall@k": 1.0
+      },
+      {
+        "lexical_weight": 0.1,
+        "k": 5,
+        "case_count": 24,
+        "mrr": 0.9792,
+        "ndcg@k": 0.9846,
+        "recall@k": 1.0
+      },
+      {
+        "lexical_weight": 0.2,
+        "k": 5,
+        "case_count": 24,
+        "mrr": 0.9792,
+        "ndcg@k": 0.9846,
+        "recall@k": 1.0
+      },
+      {
+        "lexical_weight": 0.3,
+        "k": 5,
+        "case_count": 24,
+        "mrr": 0.9792,
+        "ndcg@k": 0.9846,
+        "recall@k": 1.0
+      },
+      {
+        "lexical_weight": 0.4,
+        "k": 5,
+        "case_count": 24,
+        "mrr": 0.9792,
+        "ndcg@k": 0.9846,
+        "recall@k": 1.0
+      },
+      {
+        "lexical_weight": 0.5,
+        "k": 5,
+        "case_count": 24,
+        "mrr": 0.9792,
+        "ndcg@k": 0.9846,
+        "recall@k": 1.0
+      },
+      {
+        "lexical_weight": 0.7,
+        "k": 5,
+        "case_count": 24,
+        "mrr": 0.9792,
+        "ndcg@k": 0.9846,
+        "recall@k": 1.0
+      },
+      {
+        "lexical_weight": 1.0,
+        "k": 5,
+        "case_count": 24,
+        "mrr": 0.9583,
+        "ndcg@k": 0.9692,
+        "recall@k": 1.0
+      }
+    ],
+    "scifact": [
+      {
+        "lexical_weight": 0.0,
+        "k": 10,
+        "case_count": 809,
+        "mrr": 0.7514,
+        "ndcg@k": 0.7723,
+        "recall@k": 0.8716
+      },
+      {
+        "lexical_weight": 0.1,
+        "k": 10,
+        "case_count": 809,
+        "mrr": 0.7281,
+        "ndcg@k": 0.7533,
+        "recall@k": 0.8688
+      },
+      {
+        "lexical_weight": 0.2,
+        "k": 10,
+        "case_count": 809,
+        "mrr": 0.7018,
+        "ndcg@k": 0.7313,
+        "recall@k": 0.8626
+      },
+      {
+        "lexical_weight": 0.3,
+        "k": 10,
+        "case_count": 809,
+        "mrr": 0.6781,
+        "ndcg@k": 0.7125,
+        "recall@k": 0.8589
+      },
+      {
+        "lexical_weight": 0.4,
+        "k": 10,
+        "case_count": 809,
+        "mrr": 0.6669,
+        "ndcg@k": 0.7026,
+        "recall@k": 0.8558
+      },
+      {
+        "lexical_weight": 0.5,
+        "k": 10,
+        "case_count": 809,
+        "mrr": 0.6596,
+        "ndcg@k": 0.6933,
+        "recall@k": 0.8449
+      },
+      {
+        "lexical_weight": 0.7,
+        "k": 10,
+        "case_count": 809,
+        "mrr": 0.6491,
+        "ndcg@k": 0.6845,
+        "recall@k": 0.8443
+      },
+      {
+        "lexical_weight": 1.0,
+        "k": 10,
+        "case_count": 809,
+        "mrr": 0.6246,
+        "ndcg@k": 0.6578,
+        "recall@k": 0.8138
+      }
+    ]
+  }
+}
