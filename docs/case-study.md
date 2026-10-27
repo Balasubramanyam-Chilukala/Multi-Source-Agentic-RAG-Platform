@@ -76,19 +76,22 @@ so the evaluation was rebuilt around held-out data:
 |---|---|
 | SciFact nDCG@10: dense / hybrid / hybrid + rerank / lexical | 0.745 / 0.633 / 0.704 / 0.401 |
 | Handbook MRR: dense / hybrid | 0.940 / 0.833 (Δ +0.107, CI [+0.027, +0.200]) |
-| Answer correctness (gpt-oss-20b, 3 runs) | 0.925 ± 0.019 |
+| Answer correctness (gpt-oss-120b, dense, 3 runs) | 0.914 ± 0.019 (gpt-oss-20b, hybrid: 0.925 ± 0.019) |
 | Citation precision | 1.000 |
-| Judged faithfulness | 0.986 ± 0.025 (77 claims) |
-| Abstention accuracy | 0.925 ± 0.019 |
+| Judged faithfulness | 1.000 (93 claims; 20b: 0.986) |
+| Abstention accuracy | 0.914 ± 0.019 |
 | Injected or superseded content | 0 of 93 answers |
 
 ## What the measurements changed
 
-- **The default retrieval mode is the wrong one.** Dense beats hybrid significantly on both
-  test sets. On SciFact, PostgreSQL's `ts_rank_cd` (no IDF) reaches 0.401 nDCG@10 against about
-  0.67 for BM25 in the literature, and equal-weight RRF lets it drag good dense hits down. The
-  small single-run handbook benchmark had hinted at this (MRR −0.044); the public corpus made it
-  unambiguous. The fix is a dense default or BM25 for the lexical leg.
+- **The default retrieval mode was the wrong one, and it was fixed by measurement.** Dense beat
+  hybrid significantly on both test sets. On SciFact, PostgreSQL's `ts_rank_cd` (no IDF) reaches
+  0.401 nDCG@10 against about 0.67 for BM25 in the literature, and equal-weight RRF let it drag
+  good dense hits down. Rather than switching by assumption, the lexical list got a fusion
+  weight tuned on the dev splits. Weight 0 won (0.871 mean dev nDCG, against 0.814 for plain
+  RRF). The runner-up, 0.1, closed most of the test gap (SciFact 0.633 → 0.725) but still lost to
+  dense (Δ MRR +0.027, CI [+0.009, +0.046]). Dense became the default
+  ([ADR 0007](adr/0007-dense-default-retrieval.md)), and hybrid stays optional.
 - **The reranker is corpus-dependent.** It helps significantly on SciFact (+0.072 MRR), makes no
   significant difference on the handbook, and costs 1.4–3.7 s on CPU. It stays optional.
 - **The held-out split exposed a threshold that only looked perfect.** Tuned on all 60
@@ -128,8 +131,8 @@ so the evaluation was rebuilt around held-out data:
 - The domain test split is small (31 questions), and it, the judge calibration set, and their
   labels were written by the project author. SciFact covers retrieval only.
 - Judged faithfulness is model-judged, calibrated on 32 pairs; it is not ground truth.
-- The primary generator (`gpt-oss-120b`) still needs a 3-repetition answer run on the new
-  protocol; Groq's free 200k tokens per day ran out during the attempt.
+- Identifier-heavy queries, where lexical matching should help, are not benchmarked, so the
+  dense default is untested for that use.
 - Authentication lacks password reset, MFA, and invitations.
 - Rate limits and locks are in-process (single instance).
 - There is no OCR.
