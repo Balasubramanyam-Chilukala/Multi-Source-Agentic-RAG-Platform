@@ -10,6 +10,7 @@ from pathlib import Path
 import pytest
 
 from app.evaluation import dataset as ds
+from app.evaluation.cli import FUSION_WEIGHT_GRID, choose_weight
 from app.evaluation.dataset import DatasetError, EvalCase, RelevanceLabel, load_dataset
 from app.evaluation.judge import ClaimToJudge, FaithfulnessJudge, claims_from_answer, parse_verdicts
 from app.evaluation.report import RETRIEVAL_KEYS, mean_sd, paired_bootstrap, render_markdown
@@ -297,3 +298,11 @@ def test_report_marks_failed_runs_as_incomplete() -> None:
     assert "Incomplete" not in complete and "\n\n\n" not in complete
     partial = render_markdown([run], title="t", failed_runs=["dense #2: ProviderTimeoutError"])
     assert "Incomplete: 1 run(s) failed" in partial and "ProviderTimeoutError" in partial
+
+
+def test_fusion_weight_choice_maximises_mean_ndcg_and_prefers_simpler_on_ties() -> None:
+    curve = [{"lexical_weight": w, "mean_ndcg": 0.7} for w in FUSION_WEIGHT_GRID]
+    assert choose_weight(curve) == 0.0  # all tied: the smallest weight
+    curve[3]["mean_ndcg"] = 0.75
+    assert choose_weight(curve) == FUSION_WEIGHT_GRID[3]
+    assert FUSION_WEIGHT_GRID[0] == 0.0 and FUSION_WEIGHT_GRID[-1] == 1.0  # dense .. plain RRF
