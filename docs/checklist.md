@@ -52,7 +52,7 @@
 - [x] Model-judged faithfulness (different model family), calibrated on 32 hand-labelled pairs
 - [x] Evidence-gate threshold calibrated on the dev split only
 - [x] Lexical fusion weight tuned on dev splits (chose 0), confirmed on test; dense made the default (ADR 0007)
-- [ ] 3-repetition answer run with `gpt-oss-120b` (blocked by Groq's free daily token budget)
+- [x] 3-repetition answer run with `gpt-oss-120b` on the shipped (dense) configuration
 - [x] Run telemetry (node trace, attempts, scores, tokens, outcome, error category)
 - [x] Optional OpenTelemetry and LangSmith; neither required
 
