@@ -11,6 +11,8 @@ class RetrievalConfig:
     top_k: int = 6
     candidate_k: int = 24
     rrf_k: int = 60
+    # Weight of the lexical list in hybrid fusion (dense is 1.0); see retrieval/fusion.py.
+    lexical_weight: float = 1.0
     min_dense_similarity: float = 0.35
     min_lexical_coverage: float = 0.5
     min_rerank_score: float = -4.0
@@ -21,6 +23,7 @@ class RetrievalConfig:
             "top_k": self.top_k,
             "candidate_k": self.candidate_k,
             "rrf_k": self.rrf_k,
+            "lexical_weight": self.lexical_weight,
             "min_dense_similarity": self.min_dense_similarity,
             "min_lexical_coverage": self.min_lexical_coverage,
             "min_rerank_score": self.min_rerank_score,
