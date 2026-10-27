@@ -129,6 +129,9 @@ class Settings(BaseSettings):
     retrieval_top_k: int = Field(default=6, ge=1, le=50)
     retrieval_candidate_k: int = Field(default=24, ge=1, le=200)
     rrf_k: int = Field(default=60, ge=1, le=1000)
+    # Weight of the lexical ranking in hybrid RRF (dense counts 1.0). Tune it on dev splits with
+    # `evaluate --calibrate-fusion`; 1.0 is plain, unweighted RRF.
+    rrf_lexical_weight: float = Field(default=1.0, ge=0, le=1)
     # Evidence-sufficiency heuristics; see docs/retrieval-and-evaluation.md for calibration.
     # 0.32 is calibrated for nvidia/nemotron-3.5-embed-1b@1024 on the atlas-handbook-v1 *dev*
     # split only (`evaluate --calibrate-threshold`): the largest value that still passes >= 95% of
