@@ -206,7 +206,7 @@ uv run python -m app.cli evaluate --calibrate-threshold                         
   uses about 80k. `--pause 8` keeps a run under the 8k tokens-per-minute limit.
 - **From the UI:** the Evaluation dashboard (admin) runs the same code in the caller's workspace.
 
-## Measured results (2026-10-24)
+## Measured results (2026-10-24, updated 2026-10-27)
 
 ### Retrieval: SciFact test split (300 claims, document-level, k = 10, 3 repetitions)
 
@@ -280,7 +280,29 @@ workspaces whose queries depend on exact identifiers, a case neither benchmark t
 lexical ranker (BM25) is the change that could reverse this, and it should be measured the same
 way.
 
-### Answers: handbook test split (31 questions, 3 repetitions)
+### Answers: shipped configuration, gpt-oss-120b with dense retrieval (31 questions, 3 runs)
+
+Report [`atlas-handbook-v1/20261027T160504Z`](../backend/eval/results/atlas-handbook-v1/20261027T160504Z.md).
+Generator: Groq `openai/gpt-oss-120b`, pinned. Judge: NVIDIA `nemotron-3-ultra-550b-a55b`.
+Retrieval: dense, k = 5.
+
+| Correctness | Completeness | Citation precision | Faithfulness (proxy) | Faithfulness (judged) | Abstention acc. | Forbidden content | e2e p50 |
+|---|---|---|---|---|---|---|---|
+| **0.914 ± 0.019** | 0.933 ± 0.023 | **1.000** | 0.951 ± 0.011 | **1.000** | 0.914 ± 0.019 | **0.000** | 1.5 s |
+
+- **Judging:** 93 cited claims were judged, covering 73 of 73 eligible answers, with no partial
+  or unsupported verdicts. There were 0 provider errors.
+- **Token use:** about 23k prompt and 2.5k completion tokens, over 33 LLM calls, per run.
+
+Misses:
+- **am-01**, in all 3 runs: the ambiguous "What is the limit?" (see below).
+- **pp-03**, in all 3 runs: blocked by the dev-calibrated gate (top similarity 0.256). With dense
+  retrieval, the query rewrite does not rescue it.
+- **pp-07**, in 2 of 3 runs: "How precisely can the *smaller* robot arm return to the same
+  position?" The answer requires comparing two catalog entries, and the model declined rather
+  than infer which arm is smaller.
+
+### Answers: gpt-oss-20b with hybrid retrieval (31 questions, 3 repetitions)
 
 Report [`atlas-handbook-v1/20261024T142917Z`](../backend/eval/results/atlas-handbook-v1/20261024T142917Z.md).
 Generator: Groq `openai/gpt-oss-20b`, pinned. Judge: NVIDIA `nemotron-3-ultra-550b-a55b`.
