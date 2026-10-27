@@ -32,9 +32,9 @@ All modes share the same tenant and collection filter in SQL and the same candid
 
 | Mode | Pipeline |
 |---|---|
-| `dense` | pgvector cosine on `embedding::vector(1024)`, per-model partial HNSW index, `hnsw.iterative_scan=relaxed_order` so filters don't starve results |
+| `dense` (default) | pgvector cosine on `embedding::vector(1024)`, per-model partial HNSW index, `hnsw.iterative_scan=relaxed_order` so filters don't starve results |
 | `lexical` | PostgreSQL full-text search: the question's own lexemes OR-ed (`to_tsvector` → `to_tsquery('simple', a \| b …)`), ranked by `ts_rank_cd(…, 1)`. **Not BM25.** |
-| `hybrid` | dense + lexical fused with Reciprocal Rank Fusion, `score = Σ 1/(60 + rank)` |
+| `hybrid` | dense + lexical fused with Reciprocal Rank Fusion, `score = Σ w/(60 + rank)`; dense weight 1, lexical weight `RRF_LEXICAL_WEIGHT` (default 1) |
 | `hybrid_rerank` | hybrid top 24 re-scored by a cross-encoder, then top k |
 
 **Why OR semantics:** `websearch_to_tsquery` requires every term to match, which rarely works
@@ -42,6 +42,11 @@ for natural-language questions.
 
 **Why RRF:** cosine similarities and `ts_rank_cd` values live on incompatible scales. RRF uses
 ranks only, so it needs no score calibration.
+
+**Why dense is the default:** it ranks at least as well as hybrid on both held-out test splits,
+and tuning the lexical weight on the dev splits chose 0. See
+[ADR 0007](adr/0007-dense-default-retrieval.md) and
+[Fusion weight tuning](#fusion-weight-tuning-dev--test) below.
 
 ### Rerankers
 
@@ -246,9 +251,34 @@ Recall saturates on this small corpus, so MRR and nDCG are the discriminating me
 again significantly better than hybrid. The reranker's effect is not significant here; an
 earlier single run on all 60 questions had it slightly negative.
 
-**Consequence.** Hybrid remains the default only on the argument that lexical matching protects
-exact identifiers (codes, names), and neither dataset tests that. On the evidence, the default
-should become dense, or the lexical leg should get BM25 (or a weighted fusion tuned on dev).
+### Fusion weight tuning (dev → test)
+
+Since hybrid lost to dense on both test splits, the lexical list was given a weight, tuned on
+the **dev** splits only (`evaluate --calibrate-fusion --dataset atlas-handbook-v1,scifact`):
+hybrid retrieval for weights 0–1, maximising mean nDCG@k
+([results](../backend/eval/results/fusion-calibration/20261027T144528Z.json)).
+
+| Lexical weight | 0 (dense order) | 0.1 | 0.2 | 0.3 | 0.5 | 0.7 | 1.0 (plain RRF) |
+|---|---|---|---|---|---|---|---|
+| Handbook dev nDCG@5 (29) | 0.969 | **0.985** | 0.985 | 0.985 | 0.985 | 0.985 | 0.969 |
+| SciFact dev nDCG@10 (809) | **0.772** | 0.753 | 0.731 | 0.713 | 0.693 | 0.685 | 0.658 |
+| Mean | **0.871** | 0.869 | 0.858 | 0.849 | 0.839 | 0.835 | 0.814 |
+
+The tuning chose **0**. Every lexical weight lowered SciFact, while on the handbook any weight
+between 0.1 and 0.7 gained a single question. The runner-up, 0.1, was then measured once on the
+test splits:
+
+| Test split | dense | hybrid, weight 0.1 | hybrid, weight 1.0 | Report |
+|---|---|---|---|---|
+| SciFact nDCG@10 (300) | **0.745** | 0.725 | 0.633 | [`20261027T152506Z`](../backend/eval/results/scifact/20261027T152506Z.md) |
+| Handbook MRR (25) | 0.940 | 0.940 | 0.833 | [`20261027T152515Z`](../backend/eval/results/atlas-handbook-v1/20261027T152515Z.md) |
+
+Down-weighting closes most of the gap on SciFact (0.633 → 0.725), but dense is still
+significantly better: Δ MRR +0.027, CI [+0.009, +0.046]. **Decision:** `RETRIEVAL_MODE=dense`
+by default ([ADR 0007](adr/0007-dense-default-retrieval.md)). Hybrid stays available for
+workspaces whose queries depend on exact identifiers, a case neither benchmark tests. A better
+lexical ranker (BM25) is the change that could reverse this, and it should be measured the same
+way.
 
 ### Answers: handbook test split (31 questions, 3 repetitions)
 
