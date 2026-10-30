@@ -136,4 +136,5 @@ so the evaluation was rebuilt around held-out data:
 - Authentication lacks password reset, MFA, and invitations.
 - Rate limits and locks are in-process (single instance).
 - There is no OCR.
-- The public deployment is prepared but not yet published (it needs the owner's accounts).
+- The public deployment runs on free tiers (Render + Neon): the backend sleeps after 15 idle
+  minutes and takes about a minute to wake.
