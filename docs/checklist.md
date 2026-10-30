@@ -76,4 +76,4 @@
 ## Phase 8 — Portfolio
 - [x] README with measured results, case study, troubleshooting
 - [x] Independent code review: 15 findings fixed with regression tests
-- [ ] Screenshots — need a browser session against the running app
+- [x] Screenshots from the deployed app (docs/screenshots/)
