@@ -18,10 +18,14 @@ it apart from a chatbot over files:
    faithfulness judge that is itself checked against hand labels. Negative results are
    published alongside positive ones.
 
-> **Live demo:** not deployed yet. The free-tier deployment (Render + Neon) is prepared; see
-> [docs/deployment.md](docs/deployment.md).
+> **Live demo:** [atlas-ai-frontend-eghp.onrender.com](https://atlas-ai-frontend-eghp.onrender.com/)
+> (create a workspace to try it). It runs on free tiers (Render + Neon), so the first request
+> after 15 idle minutes takes about a minute while the backend wakes up, and answers depend on
+> free LLM quotas. How it is deployed: [docs/deployment.md](docs/deployment.md).
 >
 > The repository is named `Multi-Source-Agentic-RAG-Platform`; the product is Atlas AI.
+
+![Atlas AI workspace dashboard](docs/screenshots/02-dashboard.png)
 
 ## Measured quality (2026-10-27)
 
@@ -297,8 +301,13 @@ not proofs.
 
 ## Screenshots
 
-To be added from the deployed app. The Playwright visual spec can capture them:
-`E2E_SCREENSHOTS=1 npx playwright test e2e/visual.spec.ts`.
+From the deployed app, using the benchmark handbook as the knowledge base.
+
+| | |
+|---|---|
+| ![Sign-in page](docs/screenshots/01-sign-in.png) **Sign in.** Workspaces are separate tenants. | ![Knowledge sources](docs/screenshots/03-knowledge-sources.png) **Knowledge sources.** Collections with document, chunk and embedding-model status. |
+| ![AI chat](docs/screenshots/04-chat.png) **AI chat.** Answers cite passages; with too little evidence the assistant says so. | ![Evaluation dashboard](docs/screenshots/05-evaluation.png) **Evaluation.** Run the benchmark from the UI and compare retrieval modes. |
+| ![Run inspection](docs/screenshots/06-run-inspection.png) **Run inspection.** Every agent run with outcome, model, latency and tokens. | ![Settings](docs/screenshots/07-settings.png) **Settings.** Workspace overrides next to the read-only server configuration and fallback chain. |
 
 ## Future work
 
